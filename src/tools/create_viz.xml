@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tool name="create_viz">
+    <description>Create visualizations from table data and store as chart resources</description>
+    <parameters>
+        <parameter name="table_uri" type="string" required="true">
+            <description>URI of the table resource to visualize</description>
+        </parameter>
+        <parameter name="chart_type" type="string" required="true">
+            <description>Type of chart (line, bar, scatter, pie, heatmap, histogram)</description>
+        </parameter>
+        <parameter name="x_column" type="string" required="false" default="">
+            <description>Column to use for X-axis</description>
+        </parameter>
+        <parameter name="y_column" type="string" required="false" default="">
+            <description>Column to use for Y-axis</description>
+        </parameter>
+        <parameter name="color_column" type="string" required="false" default="">
+            <description>Column to use for color coding</description>
+        </parameter>
+        <parameter name="title" type="string" required="false" default="">
+            <description>Chart title</description>
+        </parameter>
+        <parameter name="store_as_resource" type="boolean" required="false" default="true">
+            <description>Whether to store chart as a resource</description>
+        </parameter>
+        <parameter name="chart_config" type="object" required="false" default="{}">
+            <description>Additional chart configuration options</description>
+        </parameter>
+    </parameters>
+    <returns>
+        <parameter name="chart_type" type="string">
+            <description>The type of chart created</description>
+        </parameter>
+        <parameter name="chart_data" type="object">
+            <description>Chart data and configuration</description>
+        </parameter>
+        <parameter name="resource_uri" type="string">
+            <description>URI of the stored chart resource</description>
+        </parameter>
+        <parameter name="insights" type="array">
+            <description>Key insights from the visualization</description>
+        </parameter>
+        <parameter name="status" type="string">
+            <description>Status of chart creation (created, failed)</description>
+        </parameter>
+    </returns>
+    <examples>
+        <example>
+            <input>
+                <table_uri>resource://tables/abc123-def456</table_uri>
+                <chart_type>line</chart_type>
+                <x_column>month</x_column>
+                <y_column>total_sales</y_column>
+                <title>Monthly Sales Trends</title>
+                <store_as_resource>true</store_as_resource>
+                <chart_config>{"width": 800, "height": 400}</chart_config>
+            </input>
+            <output>
+                <chart_type>line</chart_type>
+                <chart_data>{"type": "line", "data": {"labels": ["Jan", "Feb", "Mar"], "datasets": [{"label": "Sales", "data": [1000, 1200, 1500]}]}, "options": {"title": "Monthly Sales Trends"}}</chart_data>
+                <resource_uri>resource://charts/def456-ghi789</resource_uri>
+                <insights>["Sales show consistent growth trend", "March had the highest sales", "Average monthly growth rate is 25%"]</insights>
+                <status>created</status>
+            </output>
+        </example>
+        <example>
+            <input>
+                <table_uri>resource://tables/def456-ghi789</table_uri>
+                <chart_type>bar</chart_type>
+                <x_column>name</x_column>
+                <y_column>total_spent</y_column>
+                <title>Top Customers by Spending</title>
+                <store_as_resource>true</store_as_resource>
+                <chart_config>{"orientation": "horizontal"}</chart_config>
+            </input>
+            <output>
+                <chart_type>bar</chart_type>
+                <chart_data>{"type": "bar", "data": {"labels": ["John Doe", "Jane Smith"], "datasets": [{"label": "Total Spent", "data": [1500, 1200]}]}, "options": {"title": "Top Customers by Spending"}}</chart_data>
+                <resource_uri>resource://charts/ghi789-jkl012</resource_uri>
+                <insights>["John Doe is the highest spender", "Top 2 customers account for 45% of total revenue", "Clear spending hierarchy among customers"]</insights>
+                <status>created</status>
+            </output>
+        </example>
+        <example>
+            <input>
+                <table_uri>resource://tables/abc123-def456</table_uri>
+                <chart_type>scatter</chart_type>
+                <x_column>age</x_column>
+                <y_column>purchase_amount</y_column>
+                <color_column>gender</color_column>
+                <title>Age vs Purchase Amount by Gender</title>
+                <store_as_resource>true</store_as_resource>
+                <chart_config>{"trendline": true}</chart_config>
+            </input>
+            <output>
+                <chart_type>scatter</chart_type>
+                <chart_data>{"type": "scatter", "data": {"datasets": [{"label": "Male", "data": [{"x": 25, "y": 100}, {"x": 35, "y": 200}]}, {"label": "Female", "data": [{"x": 28, "y": 150}, {"x": 32, "y": 180}]}]}, "options": {"title": "Age vs Purchase Amount by Gender"}}</chart_data>
+                <resource_uri>resource://charts/jkl012-mno345</resource_uri>
+                <insights>["Positive correlation between age and purchase amount", "Gender shows different spending patterns", "Outliers suggest high-value customers"]</insights>
+                <status>created</status>
+            </output>
+        </example>
+    </examples>
+</tool> 

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tool name="execute_sql">
+    <description>Execute SQL query and return results as a table resource</description>
+    <parameters>
+        <parameter name="sql_query" type="string" required="true">
+            <description>SQL query to execute</description>
+        </parameter>
+        <parameter name="db_connection" type="string" required="false" default="sqlite:///./data/analytics.db">
+            <description>Database connection string</description>
+        </parameter>
+        <parameter name="store_as_resource" type="boolean" required="false" default="true">
+            <description>Whether to store results as a resource for later reference</description>
+        </parameter>
+        <parameter name="resource_name" type="string" required="false" default="">
+            <description>Custom name for the stored resource (optional)</description>
+        </parameter>
+        <parameter name="max_rows" type="integer" required="false" default="1000">
+            <description>Maximum number of rows to return</description>
+        </parameter>
+    </parameters>
+    <returns>
+        <parameter name="sql_query" type="string">
+            <description>The executed SQL query</description>
+        </parameter>
+        <parameter name="columns" type="array">
+            <description>Column names from the result set</description>
+        </parameter>
+        <parameter name="row_count" type="integer">
+            <description>Number of rows returned</description>
+        </parameter>
+        <parameter name="data" type="array">
+            <description>Result data as array of objects</description>
+        </parameter>
+        <parameter name="resource_uri" type="string">
+            <description>URI of the stored resource (if stored)</description>
+        </parameter>
+        <parameter name="execution_time" type="number">
+            <description>Query execution time in seconds</description>
+        </parameter>
+        <parameter name="status" type="string">
+            <description>Status of execution (executed, failed)</description>
+        </parameter>
+    </returns>
+    <examples>
+        <example>
+            <input>
+                <sql_query>SELECT * FROM users LIMIT 5</sql_query>
+                <db_connection>sqlite:///./data/analytics.db</db_connection>
+                <store_as_resource>true</store_as_resource>
+                <resource_name>user_preview</resource_name>
+                <max_rows>1000</max_rows>
+            </input>
+            <output>
+                <sql_query>SELECT * FROM users LIMIT 5</sql_query>
+                <columns>["id", "name", "email", "signup_date"]</columns>
+                <row_count>5</row_count>
+                <data>[{"id": 1, "name": "John Doe", "email": "john@example.com", "signup_date": "2024-01-15"}, {"id": 2, "name": "Jane Smith", "email": "jane@example.com", "signup_date": "2024-01-20"}]</data>
+                <resource_uri>resource://tables/abc123-def456</resource_uri>
+                <execution_time>0.023</execution_time>
+                <status>executed</status>
+            </output>
+        </example>
+        <example>
+            <input>
+                <sql_query>SELECT COUNT(*) as total_users FROM users</sql_query>
+                <db_connection>sqlite:///./data/analytics.db</db_connection>
+                <store_as_resource>false</store_as_resource>
+                <max_rows>1000</max_rows>
+            </input>
+            <output>
+                <sql_query>SELECT COUNT(*) as total_users FROM users</sql_query>
+                <columns>["total_users"]</columns>
+                <row_count>1</row_count>
+                <data>[{"total_users": 1250}]</data>
+                <resource_uri>null</resource_uri>
+                <execution_time>0.008</execution_time>
+                <status>executed</status>
+            </output>
+        </example>
+        <example>
+            <input>
+                <sql_query>SELECT c.name, SUM(o.amount) as total_spent FROM customers c JOIN orders o ON c.id = o.customer_id GROUP BY c.id, c.name ORDER BY total_spent DESC LIMIT 10</sql_query>
+                <db_connection>sqlite:///./data/analytics.db</db_connection>
+                <store_as_resource>true</store_as_resource>
+                <resource_name>top_customers</resource_name>
+                <max_rows>1000</max_rows>
+            </input>
+            <output>
+                <sql_query>SELECT c.name, SUM(o.amount) as total_spent FROM customers c JOIN orders o ON c.id = o.customer_id GROUP BY c.id, c.name ORDER BY total_spent DESC LIMIT 10</sql_query>
+                <columns>["name", "total_spent"]</columns>
+                <row_count>10</row_count>
+                <data>[{"name": "John Doe", "total_spent": 1500.00}, {"name": "Jane Smith", "total_spent": 1200.00}]</data>
+                <resource_uri>resource://tables/def456-ghi789</resource_uri>
+                <execution_time>0.045</execution_time>
+                <status>executed</status>
+            </output>
+        </example>
+    </examples>
+</tool> 

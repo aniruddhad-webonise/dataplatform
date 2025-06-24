@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tool name="generate_sql">
+    <description>Generate SQL query from natural language description with AI assistance</description>
+    <parameters>
+        <parameter name="nl_query" type="string" required="true">
+            <description>Natural language description of the desired SQL query</description>
+        </parameter>
+        <parameter name="db_type" type="string" required="false" default="postgresql">
+            <description>Database type (postgresql, mysql, sqlite, oracle)</description>
+        </parameter>
+        <parameter name="schema_uri" type="string" required="false">
+            <description>URI of the database schema resource to use for accurate table/column names</description>
+        </parameter>
+        <parameter name="include_explanation" type="boolean" required="false" default="true">
+            <description>Whether to include explanation of the generated SQL</description>
+        </parameter>
+    </parameters>
+    <returns>
+        <parameter name="sql_query" type="string">
+            <description>The generated SQL query</description>
+        </parameter>
+        <parameter name="explanation" type="string">
+            <description>Explanation of what the SQL query does</description>
+        </parameter>
+        <parameter name="db_type" type="string">
+            <description>The database type used for generation</description>
+        </parameter>
+        <parameter name="status" type="string">
+            <description>Status of the generation (generated, failed)</description>
+        </parameter>
+    </returns>
+    <examples>
+        <example>
+            <input>
+                <nl_query>Show me all users who signed up in the last month</nl_query>
+                <db_type>postgresql</db_type>
+                <include_explanation>true</include_explanation>
+            </input>
+            <output>
+                <sql_query>SELECT * FROM users WHERE signup_date >= CURRENT_DATE - INTERVAL '1 month'</sql_query>
+                <explanation>This query retrieves all users who signed up within the last month by comparing their signup_date with the current date minus one month.</explanation>
+                <db_type>postgresql</db_type>
+                <status>generated</status>
+            </output>
+        </example>
+        <example>
+            <input>
+                <nl_query>Find the top 5 customers by total order amount</nl_query>
+                <db_type>postgresql</db_type>
+                <include_explanation>true</include_explanation>
+            </input>
+            <output>
+                <sql_query>SELECT c.customer_id, c.name, SUM(o.amount) as total_amount 
+FROM customers c 
+JOIN orders o ON c.customer_id = o.customer_id 
+GROUP BY c.customer_id, c.name 
+ORDER BY total_amount DESC 
+LIMIT 5</sql_query>
+                <explanation>This query joins the customers and orders tables, groups the results by customer, calculates the total order amount for each customer, and returns the top 5 customers with the highest total amount.</explanation>
+                <db_type>postgresql</db_type>
+                <status>generated</status>
+            </output>
+        </example>
+        <example>
+            <input>
+                <nl_query>Get monthly sales trends for the last 12 months</nl_query>
+                <db_type>postgresql</db_type>
+                <include_explanation>true</include_explanation>
+            </input>
+            <output>
+                <sql_query>SELECT 
+    DATE_TRUNC('month', order_date) as month,
+    SUM(amount) as total_sales,
+    COUNT(*) as order_count
+FROM orders 
+WHERE order_date >= CURRENT_DATE - INTERVAL '12 months'
+GROUP BY DATE_TRUNC('month', order_date)
+ORDER BY month</sql_query>
+                <explanation>This query analyzes sales trends by grouping orders by month, calculating total sales and order count for each month over the last 12 months.</explanation>
+                <db_type>postgresql</db_type>
+                <status>generated</status>
+            </output>
+        </example>
+    </examples>
+</tool> 

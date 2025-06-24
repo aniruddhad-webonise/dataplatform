@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tool name="predictive_model">
+    <description>Run predictive analysis on table data and store results as ML resources</description>
+    <parameters>
+        <parameter name="table_uri" type="string" required="true">
+            <description>URI of the table resource to analyze</description>
+        </parameter>
+        <parameter name="target_column" type="string" required="true">
+            <description>Column to predict (dependent variable)</description>
+        </parameter>
+        <parameter name="prediction_type" type="string" required="true">
+            <description>Type of prediction (regression, classification, clustering, anomaly_detection)</description>
+        </parameter>
+        <parameter name="feature_columns" type="array" required="false" default="[]">
+            <description>Specific columns to use as features (empty for auto-selection)</description>
+        </parameter>
+        <parameter name="test_size" type="number" required="false" default="0.2">
+            <description>Proportion of data for testing (0.0 to 1.0)</description>
+        </parameter>
+        <parameter name="model_type" type="string" required="false" default="auto">
+            <description>Specific model type (linear, random_forest, xgboost, neural_network, auto)</description>
+        </parameter>
+        <parameter name="store_as_resource" type="boolean" required="false" default="true">
+            <description>Whether to store results as a resource</description>
+        </parameter>
+        <parameter name="cross_validation" type="boolean" required="false" default="true">
+            <description>Whether to perform cross-validation</description>
+        </parameter>
+    </parameters>
+    <returns>
+        <parameter name="prediction_type" type="string">
+            <description>The type of prediction performed</description>
+        </parameter>
+        <parameter name="target_column" type="string">
+            <description>The column that was predicted</description>
+        </parameter>
+        <parameter name="model_performance" type="object">
+            <description>Model performance metrics</description>
+        </parameter>
+        <parameter name="feature_importance" type="array">
+            <description>Feature importance scores</description>
+        </parameter>
+        <parameter name="predictions" type="array">
+            <description>Predicted values for test set</description>
+        </parameter>
+        <parameter name="resource_uri" type="string">
+            <description>URI of the stored ML resource</description>
+        </parameter>
+        <parameter name="insights" type="array">
+            <description>Key insights from the model</description>
+        </parameter>
+        <parameter name="status" type="string">
+            <description>Status of prediction (completed, failed)</description>
+        </parameter>
+    </returns>
+    <examples>
+        <example>
+            <input>
+                <table_uri>resource://tables/abc123-def456</table_uri>
+                <target_column>sales_amount</target_column>
+                <prediction_type>regression</prediction_type>
+                <feature_columns>["advertising_budget", "season", "competitor_price"]</feature_columns>
+                <test_size>0.2</test_size>
+                <model_type>random_forest</model_type>
+                <store_as_resource>true</store_as_resource>
+                <cross_validation>true</cross_validation>
+            </input>
+            <output>
+                <prediction_type>regression</prediction_type>
+                <target_column>sales_amount</target_column>
+                <model_performance>{"r2_score": 0.85, "mae": 150.25, "rmse": 200.50, "cross_val_score": 0.82}</model_performance>
+                <feature_importance>[{"feature": "advertising_budget", "importance": 0.45}, {"feature": "season", "importance": 0.30}, {"feature": "competitor_price", "importance": 0.25}]</feature_importance>
+                <predictions>[1200.50, 1350.75, 980.25, 1100.00]</predictions>
+                <resource_uri>resource://ml/def456-ghi789</resource_uri>
+                <insights>["Advertising budget is the strongest predictor", "Model explains 85% of sales variance", "Seasonal effects are significant"]</insights>
+                <status>completed</status>
+            </output>
+        </example>
+        <example>
+            <input>
+                <table_uri>resource://tables/def456-ghi789</table_uri>
+                <target_column>churn</target_column>
+                <prediction_type>classification</prediction_type>
+                <feature_columns>["age", "tenure", "monthly_charges", "total_charges"]</feature_columns>
+                <test_size>0.3</test_size>
+                <model_type>xgboost</model_type>
+                <store_as_resource>true</store_as_resource>
+                <cross_validation>true</cross_validation>
+            </input>
+            <output>
+                <prediction_type>classification</prediction_type>
+                <target_column>churn</target_column>
+                <model_performance>{"accuracy": 0.92, "precision": 0.88, "recall": 0.85, "f1_score": 0.86, "auc": 0.94}</model_performance>
+                <feature_importance>[{"feature": "monthly_charges", "importance": 0.35}, {"feature": "tenure", "importance": 0.30}, {"feature": "age", "importance": 0.20}, {"feature": "total_charges", "importance": 0.15}]</feature_importance>
+                <predictions>[0, 1, 0, 0, 1]</predictions>
+                <resource_uri>resource://ml/ghi789-jkl012</resource_uri>
+                <insights>["Monthly charges are the strongest churn predictor", "Longer tenure reduces churn risk", "Model achieves 92% accuracy"]</insights>
+                <status>completed</status>
+            </output>
+        </example>
+        <example>
+            <input>
+                <table_uri>resource://tables/abc123-def456</table_uri>
+                <target_column>customer_segment</target_column>
+                <prediction_type>clustering</prediction_type>
+                <feature_columns>["age", "income", "purchase_frequency"]</feature_columns>
+                <test_size>0.0</test_size>
+                <model_type>kmeans</model_type>
+                <store_as_resource>true</store_as_resource>
+                <cross_validation>false</cross_validation>
+            </input>
+            <output>
+                <prediction_type>clustering</prediction_type>
+                <target_column>customer_segment</target_column>
+                <model_performance>{"silhouette_score": 0.75, "inertia": 1250.50, "n_clusters": 3}</model_performance>
+                <feature_importance>[{"feature": "income", "importance": 0.40}, {"feature": "purchase_frequency", "importance": 0.35}, {"feature": "age", "importance": 0.25}]</feature_importance>
+                <predictions>[0, 1, 2, 0, 1, 2, 0]</predictions>
+                <resource_uri>resource://ml/jkl012-mno345</resource_uri>
+                <insights>["3 distinct customer segments identified", "Income is the primary segmentation factor", "High silhouette score indicates good clustering"]</insights>
+                <status>completed</status>
+            </output>
+        </example>
+    </examples>
+</tool> 

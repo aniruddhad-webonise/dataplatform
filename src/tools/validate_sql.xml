@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tool name="validate_sql">
+    <description>Validate SQL query for syntax, security, and performance considerations</description>
+    <parameters>
+        <parameter name="sql_query" type="string" required="true">
+            <description>SQL query to validate</description>
+        </parameter>
+        <parameter name="validation_level" type="string" required="false" default="comprehensive">
+            <description>Validation level (basic, security, performance, comprehensive)</description>
+        </parameter>
+        <parameter name="db_type" type="string" required="false" default="postgresql">
+            <description>Database type for syntax validation</description>
+        </parameter>
+    </parameters>
+    <returns>
+        <parameter name="valid" type="boolean">
+            <description>Whether the SQL query is valid</description>
+        </parameter>
+        <parameter name="issues" type="array">
+            <description>List of validation issues found</description>
+        </parameter>
+        <parameter name="suggestions" type="array">
+            <description>List of improvement suggestions</description>
+        </parameter>
+        <parameter name="risk_level" type="string">
+            <description>Security risk level (low, medium, high)</description>
+        </parameter>
+        <parameter name="performance_score" type="number">
+            <description>Performance score from 0-100</description>
+        </parameter>
+        <parameter name="status" type="string">
+            <description>Status of validation (validated, failed)</description>
+        </parameter>
+    </returns>
+    <examples>
+        <example>
+            <input>
+                <sql_query>SELECT * FROM users WHERE signup_date >= CURRENT_DATE - INTERVAL '1 month'</sql_query>
+                <validation_level>comprehensive</validation_level>
+                <db_type>postgresql</db_type>
+            </input>
+            <output>
+                <valid>true</valid>
+                <issues>[]</issues>
+                <suggestions>["Consider adding LIMIT clause for large datasets", "Add index on signup_date column for better performance"]</suggestions>
+                <risk_level>low</risk_level>
+                <performance_score>85</performance_score>
+                <status>validated</status>
+            </output>
+        </example>
+        <example>
+            <input>
+                <sql_query>SELECT * FROM users WHERE email = 'admin@example.com' OR 1=1</sql_query>
+                <validation_level>security</validation_level>
+                <db_type>postgresql</db_type>
+            </input>
+            <output>
+                <valid>false</valid>
+                <issues>["Potential SQL injection vulnerability: OR 1=1 condition", "Query returns all users instead of specific user"]</issues>
+                <suggestions>["Use parameterized queries", "Add proper input validation", "Use specific WHERE conditions"]</suggestions>
+                <risk_level>high</risk_level>
+                <performance_score>20</performance_score>
+                <status>validated</status>
+            </output>
+        </example>
+        <example>
+            <input>
+                <sql_query>SELECT * FROM orders o JOIN customers c ON o.customer_id = c.id JOIN products p ON o.product_id = p.id WHERE o.order_date > '2024-01-01'</sql_query>
+                <validation_level>performance</validation_level>
+                <db_type>postgresql</db_type>
+            </input>
+            <output>
+                <valid>true</valid>
+                <issues>["No LIMIT clause - may return large result set", "Missing indexes on join columns"]</issues>
+                <suggestions>["Add LIMIT clause", "Create indexes on customer_id and product_id", "Consider pagination for large datasets"]</suggestions>
+                <risk_level>medium</risk_level>
+                <performance_score>60</performance_score>
+                <status>validated</status>
+            </output>
+        </example>
+    </examples>
+</tool> 

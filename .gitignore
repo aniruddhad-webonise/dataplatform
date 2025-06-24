@@ -1,0 +1,6 @@
+.env
+tts2/
+test_server.py
+test_schema_discovery.py
+.DS_Store
+src/main.py

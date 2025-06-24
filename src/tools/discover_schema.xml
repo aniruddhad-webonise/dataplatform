@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tool>
+    <name>discover_schema</name>
+    <description>Discover and extract complete database schema including tables, columns, relationships, and sample data. This tool connects to a database and creates a comprehensive schema resource that can be referenced by other tools for accurate SQL generation.</description>
+    
+    <inputSchema>
+        <type>object</type>
+        <properties>
+            <connection_string>
+                <type>string</type>
+                <description>Database connection string (e.g., sqlite:///./data/analytics.db, postgresql://user:pass@localhost/db)</description>
+            </connection_string>
+            <include_sample_data>
+                <type>boolean</type>
+                <description>Whether to include sample data from each table (default: true)</description>
+                <default>true</default>
+            </include_sample_data>
+            <max_sample_rows>
+                <type>integer</type>
+                <description>Maximum number of sample rows to include per table (default: 5)</description>
+                <default>5</default>
+            </max_sample_rows>
+        </properties>
+        <required>["connection_string"]</required>
+    </inputSchema>
+    
+    <returns>
+        <type>object</type>
+        <properties>
+            <schema_uri>
+                <type>string</type>
+                <description>URI of the created schema resource</description>
+            </schema_uri>
+            <database_type>
+                <type>string</type>
+                <description>Type of database (sqlite, postgresql, mysql, etc.)</description>
+            </database_type>
+            <table_count>
+                <type>integer</type>
+                <description>Number of tables discovered</description>
+            </table_count>
+            <status>
+                <type>string</type>
+                <description>Status of schema discovery</description>
+            </status>
+        </properties>
+    </returns>
+    
+    <examples>
+        <example>
+            <input>
+                <connection_string>sqlite:///./data/analytics.db</connection_string>
+                <include_sample_data>true</include_sample_data>
+                <max_sample_rows>3</max_sample_rows>
+            </input>
+            <output>
+                <schema_uri>mcp://database/schema/sqlite_analytics_db</schema_uri>
+                <database_type>sqlite</database_type>
+                <table_count>7</table_count>
+                <status>discovered</status>
+            </output>
+        </example>
+    </examples>
+</tool> 
