@@ -12,6 +12,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from aiohttp import web
 import uuid
+import urllib.parse
 
 # Add src to path for imports
 sys.path.append(str(Path(__file__).parent))
@@ -89,23 +90,14 @@ class HTTPMCPServer:
             elif tool_name == "execute_sql":
                 result = await self.sql_tools.execute_sql(
                     arguments.get("sql_query"),
-                    arguments.get("db_connection", "sqlite:///./data/analytics.db")
+                    arguments.get("db_connection", "sqlite:///./data/analytics.db"),
+                    arguments.get("store_as_resource", True),
+                    arguments.get("resource_name"),
+                    arguments.get("resource_description"),
+                    arguments.get("resource_tags"),
+                    arguments.get("resource_category"),
+                    arguments.get("max_rows", 1000)
                 )
-                
-                # If storing as resource is requested, store the result
-                if arguments.get("store_as_resource", True):
-                    try:
-                        result_data = json.loads(result)
-                        if "data" in result_data:
-                            uri = await self.resource_manager.store_table_resource(
-                                result_data, 
-                                arguments.get("sql_query")
-                            )
-                            if uri:
-                                result_data["resource_uri"] = uri
-                                result = json.dumps(result_data, indent=2)
-                    except Exception as e:
-                        print(f"Error storing resource: {e}")
                 
                 return web.json_response({
                     "status": "success",
@@ -117,22 +109,12 @@ class HTTPMCPServer:
                 result = await self.sql_tools.discover_schema(
                     arguments.get("connection_string"),
                     arguments.get("include_sample_data", True),
-                    arguments.get("max_sample_rows", 5)
+                    arguments.get("max_sample_rows", 5),
+                    arguments.get("schema_name"),
+                    arguments.get("schema_description"),
+                    arguments.get("schema_tags"),
+                    arguments.get("schema_category")
                 )
-                
-                # Store schema as resource
-                try:
-                    result_data = json.loads(result)
-                    if "schema_uri" in result_data and "schema_data" in result_data:
-                        uri = await self.resource_manager.store_schema_resource(
-                            result_data["schema_data"],
-                            result_data["schema_uri"]
-                        )
-                        if uri:
-                            result_data["stored_uri"] = uri
-                            result = json.dumps(result_data, indent=2)
-                except Exception as e:
-                    print(f"Error storing schema resource: {e}")
                 
                 return web.json_response({
                     "status": "success",
@@ -208,10 +190,15 @@ class HTTPMCPServer:
                 "error": "Resource URI is required"
             }, status=400)
         
-        content = await self.resource_manager.read_resource(uri)
+        # URL decode the URI to handle special characters
+        decoded_uri = urllib.parse.unquote(uri)
+        
+        print(f"🔍 Reading resource: {decoded_uri}")
+        
+        content = await self.resource_manager.read_resource(decoded_uri)
         return web.json_response({
             "status": "success",
-            "uri": uri,
+            "uri": decoded_uri,
             "content": content[0].text if content else ""
         })
     
@@ -295,7 +282,7 @@ class HTTPMCPServer:
         
         # Resource endpoints
         app.router.add_get('/resources', self.handle_list_resources)
-        app.router.add_get('/resources/{uri}', self.handle_read_resource)
+        app.router.add_get('/resources/{uri:.*}', self.handle_read_resource)
         
         # Prompt endpoints
         app.router.add_get('/prompts', self.handle_list_prompts)

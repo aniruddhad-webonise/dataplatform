@@ -20,6 +20,22 @@
                 <description>Maximum number of sample rows to include per table (default: 5)</description>
                 <default>5</default>
             </max_sample_rows>
+            <schema_name>
+                <type>string</type>
+                <description>Custom name for the schema resource (optional)</description>
+            </schema_name>
+            <schema_description>
+                <type>string</type>
+                <description>Custom description for the schema resource (optional)</description>
+            </schema_description>
+            <schema_tags>
+                <type>array</type>
+                <description>Custom tags for the schema resource (optional)</description>
+            </schema_tags>
+            <schema_category>
+                <type>string</type>
+                <description>Custom category for the schema resource (optional)</description>
+            </schema_category>
         </properties>
         <required>["connection_string"]</required>
     </inputSchema>

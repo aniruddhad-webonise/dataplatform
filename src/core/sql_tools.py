@@ -179,9 +179,15 @@ Return a JSON response with:
                 "status": "failed"
             }, indent=2)
     
-    async def execute_sql(self, sql_query: str, db_connection: str = "sqlite:///./data/analytics.db") -> str:
+    async def execute_sql(self, sql_query: str, db_connection: str = "sqlite:///./data/analytics.db",
+                         store_as_resource: bool = True, resource_name: str = None,
+                         resource_description: str = None, resource_tags: list = None,
+                         resource_category: str = None, max_rows: int = 1000) -> str:
         """Execute SQL query and return results as a table resource."""
         try:
+            import time
+            start_time = time.time()
+            
             # Create engine
             engine = create_engine(db_connection)
             
@@ -193,6 +199,10 @@ Return a JSON response with:
                 if result.returns_rows:
                     rows = result.fetchall()
                     columns = result.keys()
+                    
+                    # Apply max_rows limit
+                    if len(rows) > max_rows:
+                        rows = rows[:max_rows]
                     
                     # Convert to pandas DataFrame for easier handling
                     df = pd.DataFrame(rows, columns=columns)
@@ -206,12 +216,60 @@ Return a JSON response with:
                         "status": "executed"
                     }
                     
-                    return json.dumps(table_data, indent=2, default=str)
+                    # Store as resource if requested
+                    resource_uri = None
+                    if store_as_resource:
+                        from core.resource_manager import ResourceManager
+                        resource_manager = ResourceManager()
+                        
+                        # Determine source schema if possible
+                        source_schema = None
+                        if "FROM" in sql_query.upper():
+                            # Try to extract table name to find related schema
+                            import re
+                            match = re.search(r'FROM\s+(\w+)', sql_query, re.IGNORECASE)
+                            if match:
+                                table_name = match.group(1)
+                                # Look for schema resources that contain this table
+                                for uri, meta in resource_manager.resources.items():
+                                    if meta.get("type") == "schema":
+                                        schema_meta = meta.get("metadata", {})
+                                        tables = schema_meta.get("tables", {})
+                                        if table_name in tables:
+                                            source_schema = uri
+                                            break
+                        
+                        resource_uri = await resource_manager.store_table_resource(
+                            table_data=table_data,
+                            sql_query=sql_query,
+                            name=resource_name,
+                            description=resource_description,
+                            tags=resource_tags,
+                            category=resource_category,
+                            source_schema=source_schema
+                        )
+                    
+                    execution_time = time.time() - start_time
+                    
+                    result = {
+                        "sql_query": sql_query,
+                        "columns": list(columns),
+                        "row_count": len(rows),
+                        "data": df.to_dict('records'),
+                        "resource_uri": resource_uri,
+                        "execution_time": round(execution_time, 3),
+                        "status": "executed"
+                    }
+                    
+                    return json.dumps(result, indent=2, default=str)
                 else:
                     # For non-SELECT queries
+                    execution_time = time.time() - start_time
+                    
                     return json.dumps({
                         "sql_query": sql_query,
                         "message": "Query executed successfully (no results returned)",
+                        "execution_time": round(execution_time, 3),
                         "status": "executed"
                     }, indent=2)
                     
@@ -260,7 +318,9 @@ Return a JSON response with:
                 "status": "failed"
             }, indent=2)
     
-    async def discover_schema(self, connection_string: str, include_sample_data: bool = True, max_sample_rows: int = 5) -> str:
+    async def discover_schema(self, connection_string: str, include_sample_data: bool = True, max_sample_rows: int = 5,
+                            schema_name: str = None, schema_description: str = None,
+                            schema_tags: list = None, schema_category: str = None) -> str:
         """Discover database schema and store as MCP resource."""
         try:
             # Create engine
@@ -340,13 +400,25 @@ Return a JSON response with:
                     "row_count": len(sample_data) if sample_data else 0
                 }
             
-            # Create schema resource
+            # Store as enhanced resource
+            from core.resource_manager import ResourceManager
+            resource_manager = ResourceManager()
+            
+            # Generate schema URI
             schema_uri = f"resource://schemas/{db_type}_{hash(connection_string) % 10000}.json"
             
-            # Store as resource (we'll need to integrate with ResourceManager)
-            # For now, return the schema data with the URI
+            # Store with enhanced metadata
+            stored_uri = await resource_manager.store_schema_resource(
+                schema_data=schema_data,
+                schema_uri=schema_uri,
+                name=schema_name,
+                description=schema_description,
+                tags=schema_tags,
+                category=schema_category
+            )
+            
             result = {
-                "schema_uri": schema_uri,
+                "schema_uri": stored_uri or schema_uri,
                 "database_type": db_type,
                 "table_count": len(table_names),
                 "status": "discovered",

@@ -1,24 +1,51 @@
 {
-  "resource://schemas/sqlite_4074.json": {
-    "uri": "resource://schemas/sqlite_4074.json",
+  "resource://schemas/sqlite_3451.json": {
+    "uri": "resource://schemas/sqlite_3451.json",
     "type": "schema",
-    "database_type": "sqlite",
-    "table_count": 7,
-    "connection_string": "sqlite:///./data/analytics.db",
-    "created_at": "2025-06-24T21:37:19.893425",
-    "expires_at": "2025-06-25T21:37:19.893434"
-  },
-  "resource://tables/07c1d08f-f33b-420a-9a51-c2a9f804f08a": {
-    "uri": "resource://tables/07c1d08f-f33b-420a-9a51-c2a9f804f08a",
-    "type": "table",
-    "sql_query": "SELECT u.id AS user_id, u.name AS user_name, SUM(o.amount) AS total_spending FROM users u JOIN orders o ON u.id = o.user_id GROUP BY u.id, u.name ORDER BY total_spending DESC LIMIT 5;",
-    "columns": [
-      "user_id",
-      "user_name",
-      "total_spending"
+    "name": "Sqlite Database Schema (7 tables)",
+    "description": "Sqlite database schema with 7 tables including: customer_behavior, marketing_campaigns, orders and 4 more",
+    "tags": [
+      "schema",
+      "sqlite",
+      "schema",
+      "structured"
     ],
-    "row_count": 5,
-    "created_at": "2025-06-24T21:39:39.897656",
-    "expires_at": "2025-06-25T21:39:39.897735"
+    "category": "infrastructure",
+    "created_at": "2025-06-25T15:05:43.859044",
+    "expires_at": "2025-06-26T15:05:43.859056",
+    "access_count": 1,
+    "last_accessed": "2025-06-25T15:05:57.990600",
+    "metadata": {
+      "database_type": "sqlite",
+      "table_count": 7,
+      "connection_string": "sqlite:///./data/analytics.db"
+    }
+  },
+  "resource://tables/d9d942a5-d358-4643-b7b1-22395c882ee3": {
+    "uri": "resource://tables/d9d942a5-d358-4643-b7b1-22395c882ee3",
+    "type": "table",
+    "name": "Monthly Revenue Trends Analysis",
+    "description": "Comprehensive analysis of monthly revenue patterns with sales metrics",
+    "tags": [
+      "financial",
+      "revenue",
+      "trends",
+      "monthly"
+    ],
+    "category": "analytics",
+    "created_at": "2025-06-25T15:06:14.745989",
+    "expires_at": "2025-06-26T15:06:14.746024",
+    "access_count": 0,
+    "last_accessed": null,
+    "metadata": {
+      "sql_query": "SELECT p.id AS product_id, p.name AS product_name, SUM(s.revenue) AS total_revenue FROM products p JOIN sales s ON p.id = s.product_id GROUP BY p.id, p.name ORDER BY total_revenue DESC;",
+      "columns": [
+        "product_id",
+        "product_name",
+        "total_revenue"
+      ],
+      "row_count": 25,
+      "source_schema": null
+    }
   }
 }

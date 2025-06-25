@@ -6,6 +6,7 @@ Handles storage and retrieval of tables, charts, and other resources.
 import json
 import os
 import uuid
+import re
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import List, Dict, Any, Optional
@@ -85,23 +86,37 @@ class ResourceManager:
             del self.resources[uri]
             self._save_metadata()
     
-    async def store_table_resource(self, table_data: Dict[str, Any], sql_query: str) -> str:
+    async def store_table_resource(self, table_data: Dict[str, Any], sql_query: str, 
+                                 name: str = None, description: str = None, 
+                                 tags: List[str] = None, category: str = None,
+                                 source_schema: str = None) -> str:
         """Store table data as a resource and return the URI."""
         try:
             # Generate unique URI
             resource_id = str(uuid.uuid4())
             uri = f"resource://tables/{resource_id}"
             
-            # Create resource metadata
-            metadata = {
-                "uri": uri,
-                "type": "table",
+            # Prepare content for metadata generation
+            content = {
                 "sql_query": sql_query,
                 "columns": table_data.get("columns", []),
-                "row_count": table_data.get("row_count", 0),
-                "created_at": datetime.now().isoformat(),
-                "expires_at": (datetime.now() + timedelta(hours=self.expiry_hours)).isoformat()
+                "row_count": table_data.get("row_count", 0)
             }
+            
+            # Create enhanced metadata
+            metadata = self._create_enhanced_metadata(
+                uri=uri,
+                resource_type="table",
+                content=content,
+                custom_name=name,
+                custom_description=description,
+                custom_tags=tags,
+                custom_category=category,
+                sql_query=sql_query,
+                columns=table_data.get("columns", []),
+                row_count=table_data.get("row_count", 0),
+                source_schema=source_schema
+            )
             
             # Store the resource data
             resource_file = self.storage_path / f"tables/{resource_id}.json"
@@ -114,27 +129,38 @@ class ResourceManager:
             self.resources[uri] = metadata
             self._save_metadata()
             
+            print(f"📊 Stored enhanced table resource: {metadata['name']} (tags: {', '.join(metadata['tags'])})")
             return uri
             
         except Exception as e:
             print(f"Error storing table resource: {e}")
             return None
     
-    async def store_chart_resource(self, chart_data: Dict[str, Any], chart_type: str) -> str:
+    async def store_chart_resource(self, chart_data: Dict[str, Any], chart_type: str,
+                                 name: str = None, description: str = None,
+                                 tags: List[str] = None, category: str = None) -> str:
         """Store chart data as a resource and return the URI."""
         try:
             # Generate unique URI
             resource_id = str(uuid.uuid4())
             uri = f"resource://charts/{resource_id}"
             
-            # Create resource metadata
-            metadata = {
-                "uri": uri,
-                "type": "chart",
-                "chart_type": chart_type,
-                "created_at": datetime.now().isoformat(),
-                "expires_at": (datetime.now() + timedelta(hours=self.expiry_hours)).isoformat()
+            # Prepare content for metadata generation
+            content = {
+                "chart_type": chart_type
             }
+            
+            # Create enhanced metadata
+            metadata = self._create_enhanced_metadata(
+                uri=uri,
+                resource_type="chart",
+                content=content,
+                custom_name=name,
+                custom_description=description,
+                custom_tags=tags,
+                custom_category=category,
+                chart_type=chart_type
+            )
             
             # Store the resource data
             resource_file = self.storage_path / f"charts/{resource_id}.json"
@@ -147,27 +173,38 @@ class ResourceManager:
             self.resources[uri] = metadata
             self._save_metadata()
             
+            print(f"📈 Stored enhanced chart resource: {metadata['name']} (tags: {', '.join(metadata['tags'])})")
             return uri
             
         except Exception as e:
             print(f"Error storing chart resource: {e}")
             return None
     
-    async def store_ml_resource(self, ml_data: Dict[str, Any], ml_type: str) -> str:
+    async def store_ml_resource(self, ml_data: Dict[str, Any], ml_type: str,
+                              name: str = None, description: str = None,
+                              tags: List[str] = None, category: str = None) -> str:
         """Store ML results as a resource and return the URI."""
         try:
             # Generate unique URI
             resource_id = str(uuid.uuid4())
             uri = f"resource://ml/{resource_id}"
             
-            # Create resource metadata
-            metadata = {
-                "uri": uri,
-                "type": "ml",
-                "ml_type": ml_type,
-                "created_at": datetime.now().isoformat(),
-                "expires_at": (datetime.now() + timedelta(hours=self.expiry_hours)).isoformat()
+            # Prepare content for metadata generation
+            content = {
+                "ml_type": ml_type
             }
+            
+            # Create enhanced metadata
+            metadata = self._create_enhanced_metadata(
+                uri=uri,
+                resource_type="ml",
+                content=content,
+                custom_name=name,
+                custom_description=description,
+                custom_tags=tags,
+                custom_category=category,
+                ml_type=ml_type
+            )
             
             # Store the resource data
             resource_file = self.storage_path / f"ml/{resource_id}.json"
@@ -180,13 +217,16 @@ class ResourceManager:
             self.resources[uri] = metadata
             self._save_metadata()
             
+            print(f"🤖 Stored enhanced ML resource: {metadata['name']} (tags: {', '.join(metadata['tags'])})")
             return uri
             
         except Exception as e:
             print(f"Error storing ML resource: {e}")
             return None
     
-    async def store_schema_resource(self, schema_data: Dict[str, Any], schema_uri: str) -> str:
+    async def store_schema_resource(self, schema_data: Dict[str, Any], schema_uri: str,
+                                  name: str = None, description: str = None,
+                                  tags: List[str] = None, category: str = None) -> str:
         """Store database schema as a resource and return the URI."""
         try:
             # Convert schema_uri to internal resource URI format
@@ -202,16 +242,26 @@ class ResourceManager:
                 else:
                     internal_uri = schema_uri
             
-            # Create resource metadata
-            metadata = {
-                "uri": internal_uri,
-                "type": "schema",
+            # Prepare content for metadata generation
+            content = {
                 "database_type": schema_data.get("database_type", "unknown"),
-                "table_count": len(schema_data.get("tables", {})),
-                "connection_string": schema_data.get("connection_string", ""),
-                "created_at": datetime.now().isoformat(),
-                "expires_at": (datetime.now() + timedelta(hours=self.expiry_hours)).isoformat()
+                "tables": schema_data.get("tables", {}),
+                "connection_string": schema_data.get("connection_string", "")
             }
+            
+            # Create enhanced metadata
+            metadata = self._create_enhanced_metadata(
+                uri=internal_uri,
+                resource_type="schema",
+                content=content,
+                custom_name=name,
+                custom_description=description,
+                custom_tags=tags,
+                custom_category=category,
+                database_type=schema_data.get("database_type", "unknown"),
+                table_count=len(schema_data.get("tables", {})),
+                connection_string=schema_data.get("connection_string", "")
+            )
             
             # Store the schema data
             resource_file = self.storage_path / f"schemas/{internal_uri.split('/')[-1]}"
@@ -224,6 +274,7 @@ class ResourceManager:
             self.resources[internal_uri] = metadata
             self._save_metadata()
             
+            print(f"🗄️ Stored enhanced schema resource: {metadata['name']} (tags: {', '.join(metadata['tags'])})")
             return internal_uri
             
         except Exception as e:
@@ -233,19 +284,34 @@ class ResourceManager:
     async def list_resources(self) -> List[Resource]:
         """List all available resources."""
         try:
+            print(f"🔍 Listing resources. Current resources count: {len(self.resources)}")
+            
             # Cleanup expired resources first
             self._cleanup_expired_resources()
             
+            print(f"🔍 After cleanup. Resources count: {len(self.resources)}")
+            
             resources = []
             for uri, metadata in self.resources.items():
+                print(f"🔍 Processing resource: {uri}")
+                # Use enhanced metadata for better descriptions
+                name = metadata.get("name", metadata.get("type", "unknown"))
+                description = metadata.get("description", f"{metadata.get('type', 'Unknown')} resource")
+                tags = metadata.get("tags", [])
+                category = metadata.get("category", "general")
+                
+                # Create enhanced description with tags and category
+                enhanced_description = f"{description} | Category: {category} | Tags: {', '.join(tags)}"
+                
                 resource = Resource(
                     uri=uri,
-                    name=metadata.get("type", "unknown"),
-                    description=f"{metadata.get('type', 'Unknown')} resource created at {metadata.get('created_at', 'unknown')}",
+                    name=name,
+                    description=enhanced_description,
                     mimeType="application/json"
                 )
                 resources.append(resource)
             
+            print(f"🔍 Returning {len(resources)} resources")
             return resources
             
         except Exception as e:
@@ -260,6 +326,11 @@ class ResourceManager:
             
             metadata = self.resources[uri]
             resource_type = metadata.get("type", "unknown")
+            
+            # Update access tracking
+            metadata["access_count"] = metadata.get("access_count", 0) + 1
+            metadata["last_accessed"] = datetime.now().isoformat()
+            self._save_metadata()
             
             # Determine the file path
             resource_id = uri.split("/")[-1]
@@ -302,13 +373,31 @@ class ResourceManager:
     
     def _format_table_resource(self, data: Dict[str, Any], metadata: Dict[str, Any]) -> str:
         """Format table resource for display."""
-        columns = data.get("columns", [])
+        # Get enhanced metadata
+        name = metadata.get("name", "Unknown Table")
+        description = metadata.get("description", "No description available")
+        tags = metadata.get("tags", [])
+        category = metadata.get("category", "general")
+        access_count = metadata.get("access_count", 0)
+        last_accessed = metadata.get("last_accessed", "Never")
+        
+        # Get type-specific metadata
+        type_metadata = metadata.get("metadata", {})
+        sql_query = type_metadata.get("sql_query", "Unknown")
+        columns = type_metadata.get("columns", [])
+        row_count = type_metadata.get("row_count", 0)
+        source_schema = type_metadata.get("source_schema", "None")
+        
         rows = data.get("data", [])
-        row_count = data.get("row_count", 0)
-        sql_query = metadata.get("sql_query", "Unknown")
         
         # Create a formatted table
-        formatted = f"# Table Resource: {metadata['uri']}\n\n"
+        formatted = f"# {name}\n\n"
+        formatted += f"**Description:** {description}\n\n"
+        formatted += f"**Category:** {category}\n\n"
+        formatted += f"**Tags:** {', '.join(tags)}\n\n"
+        formatted += f"**Access Count:** {access_count}\n\n"
+        formatted += f"**Last Accessed:** {last_accessed}\n\n"
+        formatted += f"**Source Schema:** {source_schema}\n\n"
         formatted += f"**SQL Query:** `{sql_query}`\n\n"
         formatted += f"**Columns:** {', '.join(columns)}\n\n"
         formatted += f"**Row Count:** {row_count}\n\n"
@@ -329,9 +418,24 @@ class ResourceManager:
     
     def _format_chart_resource(self, data: Dict[str, Any], metadata: Dict[str, Any]) -> str:
         """Format chart resource for display."""
-        chart_type = metadata.get("chart_type", "unknown")
+        # Get enhanced metadata
+        name = metadata.get("name", "Unknown Chart")
+        description = metadata.get("description", "No description available")
+        tags = metadata.get("tags", [])
+        category = metadata.get("category", "general")
+        access_count = metadata.get("access_count", 0)
+        last_accessed = metadata.get("last_accessed", "Never")
         
-        formatted = f"# Chart Resource: {metadata['uri']}\n\n"
+        # Get type-specific metadata
+        type_metadata = metadata.get("metadata", {})
+        chart_type = type_metadata.get("chart_type", "unknown")
+        
+        formatted = f"# {name}\n\n"
+        formatted += f"**Description:** {description}\n\n"
+        formatted += f"**Category:** {category}\n\n"
+        formatted += f"**Tags:** {', '.join(tags)}\n\n"
+        formatted += f"**Access Count:** {access_count}\n\n"
+        formatted += f"**Last Accessed:** {last_accessed}\n\n"
         formatted += f"**Chart Type:** {chart_type}\n\n"
         formatted += f"**Chart Data:**\n```json\n{json.dumps(data, indent=2)}\n```\n"
         
@@ -339,9 +443,24 @@ class ResourceManager:
     
     def _format_ml_resource(self, data: Dict[str, Any], metadata: Dict[str, Any]) -> str:
         """Format ML resource for display."""
-        ml_type = metadata.get("ml_type", "unknown")
+        # Get enhanced metadata
+        name = metadata.get("name", "Unknown ML Resource")
+        description = metadata.get("description", "No description available")
+        tags = metadata.get("tags", [])
+        category = metadata.get("category", "general")
+        access_count = metadata.get("access_count", 0)
+        last_accessed = metadata.get("last_accessed", "Never")
         
-        formatted = f"# ML Resource: {metadata['uri']}\n\n"
+        # Get type-specific metadata
+        type_metadata = metadata.get("metadata", {})
+        ml_type = type_metadata.get("ml_type", "unknown")
+        
+        formatted = f"# {name}\n\n"
+        formatted += f"**Description:** {description}\n\n"
+        formatted += f"**Category:** {category}\n\n"
+        formatted += f"**Tags:** {', '.join(tags)}\n\n"
+        formatted += f"**Access Count:** {access_count}\n\n"
+        formatted += f"**Last Accessed:** {last_accessed}\n\n"
         formatted += f"**ML Type:** {ml_type}\n\n"
         formatted += f"**Results:**\n```json\n{json.dumps(data, indent=2)}\n```\n"
         
@@ -349,14 +468,32 @@ class ResourceManager:
     
     def _format_schema_resource(self, data: Dict[str, Any], metadata: Dict[str, Any]) -> str:
         """Format schema resource for display."""
-        database_type = data.get("database_type", "unknown")
+        # Get enhanced metadata
+        name = metadata.get("name", "Unknown Schema")
+        description = metadata.get("description", "No description available")
+        tags = metadata.get("tags", [])
+        category = metadata.get("category", "general")
+        access_count = metadata.get("access_count", 0)
+        last_accessed = metadata.get("last_accessed", "Never")
+        
+        # Get type-specific metadata
+        type_metadata = metadata.get("metadata", {})
+        database_type = type_metadata.get("database_type", "unknown")
+        table_count = type_metadata.get("table_count", 0)
+        connection_string = type_metadata.get("connection_string", "N/A")
+        
         tables = data.get("tables", {})
         relationships = data.get("relationships", [])
         
-        formatted = f"# Database Schema Resource: {metadata['uri']}\n\n"
+        formatted = f"# {name}\n\n"
+        formatted += f"**Description:** {description}\n\n"
+        formatted += f"**Category:** {category}\n\n"
+        formatted += f"**Tags:** {', '.join(tags)}\n\n"
+        formatted += f"**Access Count:** {access_count}\n\n"
+        formatted += f"**Last Accessed:** {last_accessed}\n\n"
         formatted += f"**Database Type:** {database_type}\n\n"
-        formatted += f"**Connection String:** {data.get('connection_string', 'N/A')}\n\n"
-        formatted += f"**Tables:** {len(tables)}\n\n"
+        formatted += f"**Connection String:** {connection_string}\n\n"
+        formatted += f"**Tables:** {table_count}\n\n"
         
         # Show table information
         for table_name, table_info in tables.items():
@@ -384,4 +521,187 @@ class ResourceManager:
             for rel in relationships:
                 formatted += f"- {rel['table']}.{rel['column']} -> {rel['references']}\n"
         
-        return formatted 
+        return formatted
+    
+    def _generate_resource_name(self, resource_type: str, content: Dict[str, Any]) -> str:
+        """Auto-generate a human-readable name for a resource."""
+        if resource_type == "table":
+            sql_query = content.get("sql_query", "")
+            if sql_query:
+                # Extract table name or create descriptive name from SQL
+                if "FROM" in sql_query.upper():
+                    # Try to extract table name
+                    match = re.search(r'FROM\s+(\w+)', sql_query, re.IGNORECASE)
+                    if match:
+                        table_name = match.group(1)
+                        return f"{table_name.title()} Query Results"
+                
+                # Create name from query type
+                if "SELECT" in sql_query.upper():
+                    if "COUNT" in sql_query.upper():
+                        return "Count Query Results"
+                    elif "SUM" in sql_query.upper() or "AVG" in sql_query.upper():
+                        return "Aggregation Query Results"
+                    else:
+                        return "Data Query Results"
+            
+            return "Table Resource"
+        
+        elif resource_type == "schema":
+            db_type = content.get("database_type", "unknown")
+            table_count = len(content.get("tables", {}))
+            return f"{db_type.title()} Database Schema ({table_count} tables)"
+        
+        elif resource_type == "chart":
+            chart_type = content.get("chart_type", "unknown")
+            return f"{chart_type.title()} Chart"
+        
+        elif resource_type == "ml":
+            ml_type = content.get("ml_type", "unknown")
+            return f"{ml_type.title()} Model Results"
+        
+        return f"{resource_type.title()} Resource"
+    
+    def _generate_resource_description(self, resource_type: str, content: Dict[str, Any]) -> str:
+        """Auto-generate a description for a resource."""
+        if resource_type == "table":
+            sql_query = content.get("sql_query", "")
+            row_count = content.get("row_count", 0)
+            columns = content.get("columns", [])
+            
+            desc = f"Query results with {row_count} rows"
+            if columns:
+                desc += f" and {len(columns)} columns: {', '.join(columns[:3])}"
+                if len(columns) > 3:
+                    desc += f" and {len(columns) - 3} more"
+            
+            if sql_query:
+                desc += f". Generated from SQL: {sql_query[:100]}"
+                if len(sql_query) > 100:
+                    desc += "..."
+            
+            return desc
+        
+        elif resource_type == "schema":
+            db_type = content.get("database_type", "unknown")
+            tables = content.get("tables", {})
+            table_names = list(tables.keys())[:3]
+            
+            desc = f"{db_type.title()} database schema with {len(tables)} tables"
+            if table_names:
+                desc += f" including: {', '.join(table_names)}"
+                if len(tables) > 3:
+                    desc += f" and {len(tables) - 3} more"
+            
+            return desc
+        
+        elif resource_type == "chart":
+            chart_type = content.get("chart_type", "unknown")
+            return f"{chart_type.title()} visualization chart"
+        
+        elif resource_type == "ml":
+            ml_type = content.get("ml_type", "unknown")
+            return f"{ml_type.title()} machine learning model results"
+        
+        return f"{resource_type.title()} resource"
+    
+    def _generate_resource_tags(self, resource_type: str, content: Dict[str, Any]) -> List[str]:
+        """Auto-generate tags for a resource."""
+        tags = [resource_type]
+        
+        if resource_type == "table":
+            sql_query = content.get("sql_query", "").lower()
+            columns = [col.lower() for col in content.get("columns", [])]
+            
+            # Add tags based on SQL keywords
+            if "select" in sql_query:
+                tags.append("query")
+            if "join" in sql_query:
+                tags.append("join")
+            if "group by" in sql_query:
+                tags.append("aggregation")
+            if "order by" in sql_query:
+                tags.append("sorted")
+            if "limit" in sql_query:
+                tags.append("limited")
+            
+            # Add tags based on column names
+            for col in columns:
+                if "id" in col:
+                    tags.append("identifier")
+                if "name" in col:
+                    tags.append("name")
+                if "date" in col or "time" in col:
+                    tags.append("temporal")
+                if "amount" in col or "price" in col or "cost" in col:
+                    tags.append("financial")
+                if "count" in col or "total" in col:
+                    tags.append("metrics")
+            
+            # Remove duplicates
+            tags = list(set(tags))
+        
+        elif resource_type == "schema":
+            db_type = content.get("database_type", "unknown")
+            tags.append(db_type)
+            tags.append("schema")
+            
+            tables = content.get("tables", {})
+            if tables:
+                tags.append("structured")
+        
+        elif resource_type == "chart":
+            chart_type = content.get("chart_type", "unknown")
+            tags.append(chart_type)
+            tags.append("visualization")
+        
+        elif resource_type == "ml":
+            ml_type = content.get("ml_type", "unknown")
+            tags.append(ml_type)
+            tags.append("machine-learning")
+        
+        return tags
+    
+    def _determine_resource_category(self, resource_type: str, content: Dict[str, Any]) -> str:
+        """Determine the category for a resource."""
+        if resource_type == "schema":
+            return "infrastructure"
+        elif resource_type == "table":
+            return "data"
+        elif resource_type == "chart":
+            return "visualization"
+        elif resource_type == "ml":
+            return "analytics"
+        else:
+            return "general"
+    
+    def _create_enhanced_metadata(self, uri: str, resource_type: str, content: Dict[str, Any], 
+                                custom_name: str = None, custom_description: str = None, 
+                                custom_tags: List[str] = None, custom_category: str = None,
+                                **type_specific_metadata) -> Dict[str, Any]:
+        """Create enhanced metadata for a resource."""
+        
+        # Auto-generate basic fields if not provided
+        name = custom_name or self._generate_resource_name(resource_type, content)
+        description = custom_description or self._generate_resource_description(resource_type, content)
+        tags = custom_tags or self._generate_resource_tags(resource_type, content)
+        category = custom_category or self._determine_resource_category(resource_type, content)
+        
+        # Create enhanced metadata structure
+        metadata = {
+            "uri": uri,
+            "type": resource_type,
+            "name": name,
+            "description": description,
+            "tags": tags,
+            "category": category,
+            "created_at": datetime.now().isoformat(),
+            "expires_at": (datetime.now() + timedelta(hours=self.expiry_hours)).isoformat(),
+            "access_count": 0,
+            "last_accessed": None,
+            "metadata": {
+                **type_specific_metadata
+            }
+        }
+        
+        return metadata 

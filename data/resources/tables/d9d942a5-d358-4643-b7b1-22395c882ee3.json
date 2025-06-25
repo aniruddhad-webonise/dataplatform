@@ -1,0 +1,137 @@
+{
+  "sql_query": "SELECT p.id AS product_id, p.name AS product_name, SUM(s.revenue) AS total_revenue FROM products p JOIN sales s ON p.id = s.product_id GROUP BY p.id, p.name ORDER BY total_revenue DESC;",
+  "columns": [
+    "product_id",
+    "product_name",
+    "total_revenue"
+  ],
+  "row_count": 25,
+  "data": [
+    {
+      "product_id": 7,
+      "product_name": "Product 7",
+      "total_revenue": 10073.95
+    },
+    {
+      "product_id": 13,
+      "product_name": "Product 13",
+      "total_revenue": 9756.710000000001
+    },
+    {
+      "product_id": 18,
+      "product_name": "Product 18",
+      "total_revenue": 9359.85
+    },
+    {
+      "product_id": 19,
+      "product_name": "Product 19",
+      "total_revenue": 9326.2
+    },
+    {
+      "product_id": 3,
+      "product_name": "Product 3",
+      "total_revenue": 9146.48
+    },
+    {
+      "product_id": 1,
+      "product_name": "Product 1",
+      "total_revenue": 7555.66
+    },
+    {
+      "product_id": 4,
+      "product_name": "Product 4",
+      "total_revenue": 6857.53
+    },
+    {
+      "product_id": 16,
+      "product_name": "Product 16",
+      "total_revenue": 6347.8099999999995
+    },
+    {
+      "product_id": 21,
+      "product_name": "Product 21",
+      "total_revenue": 6202.38
+    },
+    {
+      "product_id": 11,
+      "product_name": "Product 11",
+      "total_revenue": 6072.58
+    },
+    {
+      "product_id": 8,
+      "product_name": "Product 8",
+      "total_revenue": 5638.75
+    },
+    {
+      "product_id": 10,
+      "product_name": "Product 10",
+      "total_revenue": 5631.93
+    },
+    {
+      "product_id": 22,
+      "product_name": "Product 22",
+      "total_revenue": 5541.09
+    },
+    {
+      "product_id": 5,
+      "product_name": "Product 5",
+      "total_revenue": 5505.4800000000005
+    },
+    {
+      "product_id": 14,
+      "product_name": "Product 14",
+      "total_revenue": 5361.5199999999995
+    },
+    {
+      "product_id": 20,
+      "product_name": "Product 20",
+      "total_revenue": 5188.55
+    },
+    {
+      "product_id": 9,
+      "product_name": "Product 9",
+      "total_revenue": 5151.28
+    },
+    {
+      "product_id": 6,
+      "product_name": "Product 6",
+      "total_revenue": 4951.92
+    },
+    {
+      "product_id": 25,
+      "product_name": "Product 25",
+      "total_revenue": 3850.5
+    },
+    {
+      "product_id": 2,
+      "product_name": "Product 2",
+      "total_revenue": 3822.19
+    },
+    {
+      "product_id": 17,
+      "product_name": "Product 17",
+      "total_revenue": 3656.27
+    },
+    {
+      "product_id": 12,
+      "product_name": "Product 12",
+      "total_revenue": 3619.95
+    },
+    {
+      "product_id": 23,
+      "product_name": "Product 23",
+      "total_revenue": 3570.12
+    },
+    {
+      "product_id": 15,
+      "product_name": "Product 15",
+      "total_revenue": 3027.76
+    },
+    {
+      "product_id": 24,
+      "product_name": "Product 24",
+      "total_revenue": 2588.91
+    }
+  ],
+  "status": "executed"
+}

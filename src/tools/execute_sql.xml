@@ -14,6 +14,15 @@
         <parameter name="resource_name" type="string" required="false" default="">
             <description>Custom name for the stored resource (optional)</description>
         </parameter>
+        <parameter name="resource_description" type="string" required="false" default="">
+            <description>Custom description for the stored resource (optional)</description>
+        </parameter>
+        <parameter name="resource_tags" type="array" required="false" default="[]">
+            <description>Custom tags for the stored resource (optional)</description>
+        </parameter>
+        <parameter name="resource_category" type="string" required="false" default="">
+            <description>Custom category for the stored resource (optional)</description>
+        </parameter>
         <parameter name="max_rows" type="integer" required="false" default="1000">
             <description>Maximum number of rows to return</description>
         </parameter>
