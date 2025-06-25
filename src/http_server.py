@@ -20,6 +20,7 @@ from core.sql_tools import SQLTools
 from core.resource_manager import ResourceManager
 from core.prompt_manager import PromptManager
 from core.tool_loader import ToolLoader
+from core.sql_explanation_helper import SQLExplanationHelper
 
 # Load environment variables
 load_dotenv()
@@ -32,6 +33,7 @@ class HTTPMCPServer:
         self.resource_manager = ResourceManager()
         self.prompt_manager = PromptManager()
         self.tool_loader = ToolLoader()
+        self.sql_explanation_helper = SQLExplanationHelper()
         
         # Load tools from XML files
         self.tools = self.tool_loader.load_all_tools()
@@ -54,6 +56,20 @@ class HTTPMCPServer:
                     arguments.get("db_type", "postgresql"),
                     arguments.get("schema_uri")
                 )
+                
+                result_data = json.loads(result)
+                
+                # Generate explanation if requested
+                if arguments.get("include_explanation", False):
+                    sql_query = result_data.get("sql_query")
+                    if sql_query:
+                        explanation = await self.sql_explanation_helper.generate_explanation(
+                            sql_query, 
+                            arguments.get("target_audience", "business_user")
+                        )
+                        result_data["explanation"] = explanation
+                        result = json.dumps(result_data, indent=2)
+                
                 return web.json_response({
                     "status": "success",
                     "tool": tool_name,

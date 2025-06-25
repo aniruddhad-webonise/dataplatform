@@ -97,22 +97,9 @@ Return only the SQL query, no explanations."""
             )
             sql_query = response.choices[0].message.content.strip()
 
-            # Generate explanation for the SQL query
-            explanation_prompt = "Explain the following SQL query in simple terms for a business user."
-            explanation_response = self.openai_client.chat.completions.create(
-                model=self.model,
-                messages=[
-                    {"role": "system", "content": explanation_prompt},
-                    {"role": "user", "content": f"SQL Query: {sql_query}\nPlease explain what this query does."}
-                ],
-                temperature=0.3
-            )
-            explanation = explanation_response.choices[0].message.content.strip()
-
-            # Return structured result
+            # Return structured result (SQL only, no explanation)
             result = {
                 "sql_query": sql_query,
-                "explanation": explanation,
                 "db_type": db_type,
                 "nl_query": nl_query,
                 "schema_uri": schema_uri,

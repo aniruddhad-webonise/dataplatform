@@ -11,8 +11,11 @@
         <parameter name="schema_uri" type="string" required="false">
             <description>URI of the database schema resource to use for accurate table/column names</description>
         </parameter>
-        <parameter name="include_explanation" type="boolean" required="false" default="true">
-            <description>Whether to include explanation of the generated SQL</description>
+        <parameter name="include_explanation" type="boolean" required="false" default="false">
+            <description>Whether to include explanation of the generated SQL (uses separate LLM call)</description>
+        </parameter>
+        <parameter name="target_audience" type="string" required="false" default="business_user">
+            <description>Target audience for explanation (business_user, developer, analyst)</description>
         </parameter>
     </parameters>
     <returns>

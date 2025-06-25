@@ -1,0 +1,929 @@
+{
+  "database_type": "sqlite",
+  "connection_string": "sqlite:///./data/analytics.db",
+  "tables": {
+    "customer_behavior": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "nullable": true,
+          "primary_key": 1,
+          "default": null,
+          "unique": false
+        },
+        {
+          "name": "user_id",
+          "type": "INTEGER",
+          "nullable": false,
+          "primary_key": 0,
+          "default": null,
+          "unique": false
+        },
+        {
+          "name": "session_date",
+          "type": "DATE",
+          "nullable": false,
+          "primary_key": 0,
+          "default": null,
+          "unique": false
+        },
+        {
+          "name": "pages_visited",
+          "type": "INTEGER",
+          "nullable": true,
+          "primary_key": 0,
+          "default": "1",
+          "unique": false
+        },
+        {
+          "name": "time_spent_minutes",
+          "type": "INTEGER",
+          "nullable": true,
+          "primary_key": 0,
+          "default": "5",
+          "unique": false
+        },
+        {
+          "name": "items_viewed",
+          "type": "INTEGER",
+          "nullable": true,
+          "primary_key": 0,
+          "default": "1",
+          "unique": false
+        },
+        {
+          "name": "items_added_to_cart",
+          "type": "INTEGER",
+          "nullable": true,
+          "primary_key": 0,
+          "default": "0",
+          "unique": false
+        },
+        {
+          "name": "items_purchased",
+          "type": "INTEGER",
+          "nullable": true,
+          "primary_key": 0,
+          "default": "0",
+          "unique": false
+        },
+        {
+          "name": "bounce_rate",
+          "type": "DECIMAL(3, 2)",
+          "nullable": true,
+          "primary_key": 0,
+          "default": "0.0",
+          "unique": false
+        },
+        {
+          "name": "conversion_rate",
+          "type": "DECIMAL(3, 2)",
+          "nullable": true,
+          "primary_key": 0,
+          "default": "0.0",
+          "unique": false
+        }
+      ],
+      "primary_keys": [
+        "id"
+      ],
+      "foreign_keys": [
+        {
+          "column": "user_id",
+          "references_table": "users",
+          "references_column": "id"
+        }
+      ],
+      "sample_data": [
+        {
+          "id": 1,
+          "user_id": 18,
+          "session_date": "2024-03-19",
+          "pages_visited": 16,
+          "time_spent_minutes": 18,
+          "items_viewed": 6,
+          "items_added_to_cart": 1,
+          "items_purchased": 0,
+          "bounce_rate": 0.19,
+          "conversion_rate": 0
+        },
+        {
+          "id": 2,
+          "user_id": 43,
+          "session_date": "2024-01-18",
+          "pages_visited": 12,
+          "time_spent_minutes": 103,
+          "items_viewed": 7,
+          "items_added_to_cart": 5,
+          "items_purchased": 4,
+          "bounce_rate": 0.74,
+          "conversion_rate": 0.57
+        },
+        {
+          "id": 3,
+          "user_id": 11,
+          "session_date": "2024-03-26",
+          "pages_visited": 9,
+          "time_spent_minutes": 73,
+          "items_viewed": 2,
+          "items_added_to_cart": 5,
+          "items_purchased": 4,
+          "bounce_rate": 0.42,
+          "conversion_rate": 2
+        }
+      ],
+      "row_count": 3
+    },
+    "marketing_campaigns": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "nullable": true,
+          "primary_key": 1,
+          "default": null,
+          "unique": false
+        },
+        {
+          "name": "campaign_name",
+          "type": "TEXT",
+          "nullable": false,
+          "primary_key": 0,
+          "default": null,
+          "unique": false
+        },
+        {
+          "name": "campaign_type",
+          "type": "TEXT",
+          "nullable": false,
+          "primary_key": 0,
+          "default": null,
+          "unique": false
+        },
+        {
+          "name": "start_date",
+          "type": "DATE",
+          "nullable": false,
+          "primary_key": 0,
+          "default": null,
+          "unique": false
+        },
+        {
+          "name": "end_date",
+          "type": "DATE",
+          "nullable": false,
+          "primary_key": 0,
+          "default": null,
+          "unique": false
+        },
+        {
+          "name": "budget",
+          "type": "DECIMAL(10, 2)",
+          "nullable": false,
+          "primary_key": 0,
+          "default": null,
+          "unique": false
+        },
+        {
+          "name": "spent_amount",
+          "type": "DECIMAL(10, 2)",
+          "nullable": true,
+          "primary_key": 0,
+          "default": "0.0",
+          "unique": false
+        },
+        {
+          "name": "impressions",
+          "type": "INTEGER",
+          "nullable": true,
+          "primary_key": 0,
+          "default": "0",
+          "unique": false
+        },
+        {
+          "name": "clicks",
+          "type": "INTEGER",
+          "nullable": true,
+          "primary_key": 0,
+          "default": "0",
+          "unique": false
+        },
+        {
+          "name": "conversions",
+          "type": "INTEGER",
+          "nullable": true,
+          "primary_key": 0,
+          "default": "0",
+          "unique": false
+        },
+        {
+          "name": "conversion_rate",
+          "type": "DECIMAL(5, 2)",
+          "nullable": true,
+          "primary_key": 0,
+          "default": "0.0",
+          "unique": false
+        }
+      ],
+      "primary_keys": [
+        "id"
+      ],
+      "foreign_keys": [],
+      "sample_data": [
+        {
+          "id": 1,
+          "campaign_name": "Campaign 1",
+          "campaign_type": "video",
+          "start_date": "2024-02-06",
+          "end_date": "2024-02-29",
+          "budget": 12046.89,
+          "spent_amount": 5881.15,
+          "impressions": 58774,
+          "clicks": 9807,
+          "conversions": 856,
+          "conversion_rate": 0.0873
+        },
+        {
+          "id": 2,
+          "campaign_name": "Campaign 2",
+          "campaign_type": "display",
+          "start_date": "2024-02-05",
+          "end_date": "2024-02-16",
+          "budget": 1117.21,
+          "spent_amount": 393.77,
+          "impressions": 8377,
+          "clicks": 4848,
+          "conversions": 391,
+          "conversion_rate": 0.0807
+        },
+        {
+          "id": 3,
+          "campaign_name": "Campaign 3",
+          "campaign_type": "display",
+          "start_date": "2024-01-19",
+          "end_date": "2024-01-30",
+          "budget": 33850.63,
+          "spent_amount": 28464.17,
+          "impressions": 47642,
+          "clicks": 588,
+          "conversions": 833,
+          "conversion_rate": 1.4167
+        }
+      ],
+      "row_count": 3
+    },
+    "orders": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "nullable": true,
+          "primary_key": 1,
+          "default": null,
+          "unique": false
+        },
+        {
+          "name": "user_id",
+          "type": "INTEGER",
+          "nullable": false,
+          "primary_key": 0,
+          "default": null,
+          "unique": false
+        },
+        {
+          "name": "product_id",
+          "type": "INTEGER",
+          "nullable": false,
+          "primary_key": 0,
+          "default": null,
+          "unique": false
+        },
+        {
+          "name": "quantity",
+          "type": "INTEGER",
+          "nullable": false,
+          "primary_key": 0,
+          "default": null,
+          "unique": false
+        },
+        {
+          "name": "amount",
+          "type": "DECIMAL(10, 2)",
+          "nullable": false,
+          "primary_key": 0,
+          "default": null,
+          "unique": false
+        },
+        {
+          "name": "order_date",
+          "type": "DATE",
+          "nullable": false,
+          "primary_key": 0,
+          "default": null,
+          "unique": false
+        },
+        {
+          "name": "status",
+          "type": "TEXT",
+          "nullable": true,
+          "primary_key": 0,
+          "default": "'completed'",
+          "unique": false
+        },
+        {
+          "name": "payment_method",
+          "type": "TEXT",
+          "nullable": true,
+          "primary_key": 0,
+          "default": "'credit_card'",
+          "unique": false
+        },
+        {
+          "name": "shipping_address",
+          "type": "TEXT",
+          "nullable": true,
+          "primary_key": 0,
+          "default": null,
+          "unique": false
+        },
+        {
+          "name": "discount_applied",
+          "type": "DECIMAL(5, 2)",
+          "nullable": true,
+          "primary_key": 0,
+          "default": "0.0",
+          "unique": false
+        }
+      ],
+      "primary_keys": [
+        "id"
+      ],
+      "foreign_keys": [
+        {
+          "column": "user_id",
+          "references_table": "users",
+          "references_column": "id"
+        },
+        {
+          "column": "product_id",
+          "references_table": "products",
+          "references_column": "id"
+        }
+      ],
+      "sample_data": [
+        {
+          "id": 1,
+          "user_id": 15,
+          "product_id": 11,
+          "quantity": 2,
+          "amount": 271.82,
+          "order_date": "2024-03-15",
+          "status": "cancelled",
+          "payment_method": "bank_transfer",
+          "shipping_address": "Address 1",
+          "discount_applied": 0
+        },
+        {
+          "id": 2,
+          "user_id": 35,
+          "product_id": 6,
+          "quantity": 1,
+          "amount": 28.87,
+          "order_date": "2024-03-02",
+          "status": "completed",
+          "payment_method": "paypal",
+          "shipping_address": "Address 2",
+          "discount_applied": 0
+        },
+        {
+          "id": 3,
+          "user_id": 16,
+          "product_id": 25,
+          "quantity": 3,
+          "amount": 285.13,
+          "order_date": "2024-03-26",
+          "status": "cancelled",
+          "payment_method": "paypal",
+          "shipping_address": "Address 3",
+          "discount_applied": 0
+        }
+      ],
+      "row_count": 3
+    },
+    "product_reviews": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "nullable": true,
+          "primary_key": 1,
+          "default": null,
+          "unique": false
+        },
+        {
+          "name": "user_id",
+          "type": "INTEGER",
+          "nullable": false,
+          "primary_key": 0,
+          "default": null,
+          "unique": false
+        },
+        {
+          "name": "product_id",
+          "type": "INTEGER",
+          "nullable": false,
+          "primary_key": 0,
+          "default": null,
+          "unique": false
+        },
+        {
+          "name": "rating",
+          "type": "INTEGER",
+          "nullable": false,
+          "primary_key": 0,
+          "default": null,
+          "unique": false
+        },
+        {
+          "name": "review_text",
+          "type": "TEXT",
+          "nullable": true,
+          "primary_key": 0,
+          "default": null,
+          "unique": false
+        },
+        {
+          "name": "review_date",
+          "type": "DATE",
+          "nullable": false,
+          "primary_key": 0,
+          "default": null,
+          "unique": false
+        },
+        {
+          "name": "helpful_votes",
+          "type": "INTEGER",
+          "nullable": true,
+          "primary_key": 0,
+          "default": "0",
+          "unique": false
+        }
+      ],
+      "primary_keys": [
+        "id"
+      ],
+      "foreign_keys": [
+        {
+          "column": "user_id",
+          "references_table": "users",
+          "references_column": "id"
+        },
+        {
+          "column": "product_id",
+          "references_table": "products",
+          "references_column": "id"
+        }
+      ],
+      "sample_data": [
+        {
+          "id": 1,
+          "user_id": 5,
+          "product_id": 20,
+          "rating": 2,
+          "review_text": "Review text for product 20 by user 5",
+          "review_date": "2024-01-31",
+          "helpful_votes": 5
+        },
+        {
+          "id": 2,
+          "user_id": 5,
+          "product_id": 23,
+          "rating": 2,
+          "review_text": "Review text for product 23 by user 5",
+          "review_date": "2024-03-11",
+          "helpful_votes": 12
+        },
+        {
+          "id": 3,
+          "user_id": 42,
+          "product_id": 14,
+          "rating": 3,
+          "review_text": "Review text for product 14 by user 42",
+          "review_date": "2024-03-29",
+          "helpful_votes": 5
+        }
+      ],
+      "row_count": 3
+    },
+    "products": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "nullable": true,
+          "primary_key": 1,
+          "default": null,
+          "unique": false
+        },
+        {
+          "name": "name",
+          "type": "TEXT",
+          "nullable": false,
+          "primary_key": 0,
+          "default": null,
+          "unique": false
+        },
+        {
+          "name": "category",
+          "type": "TEXT",
+          "nullable": false,
+          "primary_key": 0,
+          "default": null,
+          "unique": false
+        },
+        {
+          "name": "price",
+          "type": "DECIMAL(10, 2)",
+          "nullable": false,
+          "primary_key": 0,
+          "default": null,
+          "unique": false
+        },
+        {
+          "name": "stock_quantity",
+          "type": "INTEGER",
+          "nullable": true,
+          "primary_key": 0,
+          "default": "0",
+          "unique": false
+        },
+        {
+          "name": "created_date",
+          "type": "DATE",
+          "nullable": false,
+          "primary_key": 0,
+          "default": null,
+          "unique": false
+        },
+        {
+          "name": "rating",
+          "type": "DECIMAL(3, 2)",
+          "nullable": true,
+          "primary_key": 0,
+          "default": "4.0",
+          "unique": false
+        },
+        {
+          "name": "review_count",
+          "type": "INTEGER",
+          "nullable": true,
+          "primary_key": 0,
+          "default": "0",
+          "unique": false
+        },
+        {
+          "name": "is_featured",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "primary_key": 0,
+          "default": "0",
+          "unique": false
+        }
+      ],
+      "primary_keys": [
+        "id"
+      ],
+      "foreign_keys": [],
+      "sample_data": [
+        {
+          "id": 1,
+          "name": "Product 1",
+          "category": "Books",
+          "price": 436.43,
+          "stock_quantity": 163,
+          "created_date": "2024-03-28",
+          "rating": 3.45,
+          "review_count": 46,
+          "is_featured": 1
+        },
+        {
+          "id": 2,
+          "name": "Product 2",
+          "category": "Home & Kitchen",
+          "price": 953.24,
+          "stock_quantity": 177,
+          "created_date": "2024-01-23",
+          "rating": 4.23,
+          "review_count": 6,
+          "is_featured": 1
+        },
+        {
+          "id": 3,
+          "name": "Product 3",
+          "category": "Electronics",
+          "price": 776.23,
+          "stock_quantity": 21,
+          "created_date": "2024-01-28",
+          "rating": 3.33,
+          "review_count": 29,
+          "is_featured": 1
+        }
+      ],
+      "row_count": 3
+    },
+    "sales": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "nullable": true,
+          "primary_key": 1,
+          "default": null,
+          "unique": false
+        },
+        {
+          "name": "product_id",
+          "type": "INTEGER",
+          "nullable": false,
+          "primary_key": 0,
+          "default": null,
+          "unique": false
+        },
+        {
+          "name": "quantity",
+          "type": "INTEGER",
+          "nullable": false,
+          "primary_key": 0,
+          "default": null,
+          "unique": false
+        },
+        {
+          "name": "revenue",
+          "type": "DECIMAL(10, 2)",
+          "nullable": false,
+          "primary_key": 0,
+          "default": null,
+          "unique": false
+        },
+        {
+          "name": "sale_date",
+          "type": "DATE",
+          "nullable": false,
+          "primary_key": 0,
+          "default": null,
+          "unique": false
+        },
+        {
+          "name": "region",
+          "type": "TEXT",
+          "nullable": true,
+          "primary_key": 0,
+          "default": null,
+          "unique": false
+        },
+        {
+          "name": "sales_channel",
+          "type": "TEXT",
+          "nullable": true,
+          "primary_key": 0,
+          "default": "'online'",
+          "unique": false
+        },
+        {
+          "name": "promotion_code",
+          "type": "TEXT",
+          "nullable": true,
+          "primary_key": 0,
+          "default": null,
+          "unique": false
+        }
+      ],
+      "primary_keys": [
+        "id"
+      ],
+      "foreign_keys": [
+        {
+          "column": "product_id",
+          "references_table": "products",
+          "references_column": "id"
+        }
+      ],
+      "sample_data": [
+        {
+          "id": 1,
+          "product_id": 7,
+          "quantity": 7,
+          "revenue": 1614.88,
+          "sale_date": "2024-01-24",
+          "region": "North America",
+          "sales_channel": "mobile",
+          "promotion_code": null
+        },
+        {
+          "id": 2,
+          "product_id": 5,
+          "quantity": 5,
+          "revenue": 849.03,
+          "sale_date": "2024-01-18",
+          "region": "North America",
+          "sales_channel": "mobile",
+          "promotion_code": "PROMO2"
+        },
+        {
+          "id": 3,
+          "product_id": 5,
+          "quantity": 8,
+          "revenue": 171.76,
+          "sale_date": "2024-04-05",
+          "region": "North America",
+          "sales_channel": "in_store",
+          "promotion_code": "PROMO3"
+        }
+      ],
+      "row_count": 3
+    },
+    "users": {
+      "columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "nullable": true,
+          "primary_key": 1,
+          "default": null,
+          "unique": false
+        },
+        {
+          "name": "name",
+          "type": "TEXT",
+          "nullable": false,
+          "primary_key": 0,
+          "default": null,
+          "unique": false
+        },
+        {
+          "name": "email",
+          "type": "TEXT",
+          "nullable": false,
+          "primary_key": 0,
+          "default": null,
+          "unique": false
+        },
+        {
+          "name": "signup_date",
+          "type": "DATE",
+          "nullable": false,
+          "primary_key": 0,
+          "default": null,
+          "unique": false
+        },
+        {
+          "name": "age",
+          "type": "INTEGER",
+          "nullable": true,
+          "primary_key": 0,
+          "default": null,
+          "unique": false
+        },
+        {
+          "name": "gender",
+          "type": "TEXT",
+          "nullable": true,
+          "primary_key": 0,
+          "default": null,
+          "unique": false
+        },
+        {
+          "name": "country",
+          "type": "TEXT",
+          "nullable": true,
+          "primary_key": 0,
+          "default": null,
+          "unique": false
+        },
+        {
+          "name": "subscription_type",
+          "type": "TEXT",
+          "nullable": true,
+          "primary_key": 0,
+          "default": "'basic'",
+          "unique": false
+        },
+        {
+          "name": "last_login_date",
+          "type": "DATE",
+          "nullable": true,
+          "primary_key": 0,
+          "default": null,
+          "unique": false
+        },
+        {
+          "name": "total_logins",
+          "type": "INTEGER",
+          "nullable": true,
+          "primary_key": 0,
+          "default": "0",
+          "unique": false
+        },
+        {
+          "name": "is_active",
+          "type": "BOOLEAN",
+          "nullable": true,
+          "primary_key": 0,
+          "default": "1",
+          "unique": false
+        },
+        {
+          "name": "churn_risk_score",
+          "type": "DECIMAL(3, 2)",
+          "nullable": true,
+          "primary_key": 0,
+          "default": "0.5",
+          "unique": false
+        }
+      ],
+      "primary_keys": [
+        "id"
+      ],
+      "foreign_keys": [],
+      "sample_data": [
+        {
+          "id": 1,
+          "name": "User 1",
+          "email": "user1@example.com",
+          "signup_date": "2024-02-22",
+          "age": 46,
+          "gender": "Female",
+          "country": "Italy",
+          "subscription_type": "premium",
+          "last_login_date": "2024-03-09",
+          "total_logins": 32,
+          "is_active": 1,
+          "churn_risk_score": 0.13005505579646348
+        },
+        {
+          "id": 2,
+          "name": "User 2",
+          "email": "user2@example.com",
+          "signup_date": "2024-04-08",
+          "age": 27,
+          "gender": "Male",
+          "country": "Brazil",
+          "subscription_type": "premium",
+          "last_login_date": "2024-04-18",
+          "total_logins": 32,
+          "is_active": 1,
+          "churn_risk_score": 0.8924453337417532
+        },
+        {
+          "id": 3,
+          "name": "User 3",
+          "email": "user3@example.com",
+          "signup_date": "2024-01-03",
+          "age": 44,
+          "gender": "Female",
+          "country": "France",
+          "subscription_type": "premium",
+          "last_login_date": "2024-01-31",
+          "total_logins": 5,
+          "is_active": 1,
+          "churn_risk_score": 0.6047037562811368
+        }
+      ],
+      "row_count": 3
+    }
+  },
+  "relationships": [
+    {
+      "table": "customer_behavior",
+      "column": "user_id",
+      "references": "users.id"
+    },
+    {
+      "table": "orders",
+      "column": "user_id",
+      "references": "users.id"
+    },
+    {
+      "table": "orders",
+      "column": "product_id",
+      "references": "products.id"
+    },
+    {
+      "table": "product_reviews",
+      "column": "user_id",
+      "references": "users.id"
+    },
+    {
+      "table": "product_reviews",
+      "column": "product_id",
+      "references": "products.id"
+    },
+    {
+      "table": "sales",
+      "column": "product_id",
+      "references": "products.id"
+    }
+  ],
+  "discovered_at": "2025-06-24 21:37:19.877398"
+}

@@ -1,0 +1,37 @@
+{
+  "sql_query": "SELECT u.id AS user_id, u.name AS user_name, SUM(o.amount) AS total_spending FROM users u JOIN orders o ON u.id = o.user_id GROUP BY u.id, u.name ORDER BY total_spending DESC LIMIT 5;",
+  "columns": [
+    "user_id",
+    "user_name",
+    "total_spending"
+  ],
+  "row_count": 5,
+  "data": [
+    {
+      "user_id": 20,
+      "user_name": "User 20",
+      "total_spending": 2869.79
+    },
+    {
+      "user_id": 16,
+      "user_name": "User 16",
+      "total_spending": 1860.4
+    },
+    {
+      "user_id": 43,
+      "user_name": "User 43",
+      "total_spending": 1429.6399999999999
+    },
+    {
+      "user_id": 4,
+      "user_name": "User 4",
+      "total_spending": 1407.99
+    },
+    {
+      "user_id": 49,
+      "user_name": "User 49",
+      "total_spending": 1232.52
+    }
+  ],
+  "status": "executed"
+}
