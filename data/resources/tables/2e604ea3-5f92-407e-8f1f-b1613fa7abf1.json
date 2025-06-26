@@ -1,0 +1,37 @@
+{
+  "sql_query": "SELECT p.id AS product_id, p.name AS product_name, p.rating AS product_rating, p.review_count AS product_review_count FROM products p WHERE p.is_featured = 1 AND p.rating > 4.5;",
+  "columns": [
+    "product_id",
+    "product_name",
+    "product_rating",
+    "product_review_count"
+  ],
+  "row_count": 4,
+  "data": [
+    {
+      "product_id": 4,
+      "product_name": "Product 4",
+      "product_rating": 4.89,
+      "product_review_count": 37
+    },
+    {
+      "product_id": 7,
+      "product_name": "Product 7",
+      "product_rating": 4.61,
+      "product_review_count": 76
+    },
+    {
+      "product_id": 12,
+      "product_name": "Product 12",
+      "product_rating": 4.51,
+      "product_review_count": 40
+    },
+    {
+      "product_id": 15,
+      "product_name": "Product 15",
+      "product_rating": 4.74,
+      "product_review_count": 99
+    }
+  ],
+  "status": "executed"
+}

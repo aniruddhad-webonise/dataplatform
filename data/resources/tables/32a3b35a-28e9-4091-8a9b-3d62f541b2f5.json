@@ -1,0 +1,37 @@
+{
+  "sql_query": "SELECT s.region AS Region, SUM(s.revenue) AS Total_Revenue, COUNT(s.id) AS Number_of_Transactions FROM sales s GROUP BY s.region;",
+  "columns": [
+    "Region",
+    "Total_Revenue",
+    "Number_of_Transactions"
+  ],
+  "row_count": 5,
+  "data": [
+    {
+      "Region": "Asia Pacific",
+      "Total_Revenue": 33188.45,
+      "Number_of_Transactions": 32
+    },
+    {
+      "Region": "Europe",
+      "Total_Revenue": 33145.33,
+      "Number_of_Transactions": 34
+    },
+    {
+      "Region": "Latin America",
+      "Total_Revenue": 27462.82,
+      "Number_of_Transactions": 29
+    },
+    {
+      "Region": "Middle East",
+      "Total_Revenue": 23335.41,
+      "Number_of_Transactions": 24
+    },
+    {
+      "Region": "North America",
+      "Total_Revenue": 30673.36,
+      "Number_of_Transactions": 31
+    }
+  ],
+  "status": "executed"
+}

@@ -1,0 +1,97 @@
+{
+  "sql_query": "SELECT u.name AS user_name, u.email AS user_email, u.subscription_type, u.churn_risk_score FROM users u WHERE u.churn_risk_score > 0.7;",
+  "columns": [
+    "user_name",
+    "user_email",
+    "subscription_type",
+    "churn_risk_score"
+  ],
+  "row_count": 14,
+  "data": [
+    {
+      "user_name": "User 2",
+      "user_email": "user2@example.com",
+      "subscription_type": "premium",
+      "churn_risk_score": 0.8924453337417532
+    },
+    {
+      "user_name": "User 4",
+      "user_email": "user4@example.com",
+      "subscription_type": "enterprise",
+      "churn_risk_score": 0.8662091529800913
+    },
+    {
+      "user_name": "User 7",
+      "user_email": "user7@example.com",
+      "subscription_type": "basic",
+      "churn_risk_score": 0.8086322507643668
+    },
+    {
+      "user_name": "User 13",
+      "user_email": "user13@example.com",
+      "subscription_type": "enterprise",
+      "churn_risk_score": 0.8898996487743989
+    },
+    {
+      "user_name": "User 17",
+      "user_email": "user17@example.com",
+      "subscription_type": "enterprise",
+      "churn_risk_score": 0.8312253518346575
+    },
+    {
+      "user_name": "User 21",
+      "user_email": "user21@example.com",
+      "subscription_type": "basic",
+      "churn_risk_score": 0.823731544705183
+    },
+    {
+      "user_name": "User 22",
+      "user_email": "user22@example.com",
+      "subscription_type": "enterprise",
+      "churn_risk_score": 0.769319903604868
+    },
+    {
+      "user_name": "User 27",
+      "user_email": "user27@example.com",
+      "subscription_type": "basic",
+      "churn_risk_score": 0.7814483633158403
+    },
+    {
+      "user_name": "User 35",
+      "user_email": "user35@example.com",
+      "subscription_type": "enterprise",
+      "churn_risk_score": 0.7170342873792805
+    },
+    {
+      "user_name": "User 36",
+      "user_email": "user36@example.com",
+      "subscription_type": "basic",
+      "churn_risk_score": 0.8000586874799477
+    },
+    {
+      "user_name": "User 39",
+      "user_email": "user39@example.com",
+      "subscription_type": "enterprise",
+      "churn_risk_score": 0.7092076588152522
+    },
+    {
+      "user_name": "User 41",
+      "user_email": "user41@example.com",
+      "subscription_type": "enterprise",
+      "churn_risk_score": 0.8511467665990086
+    },
+    {
+      "user_name": "User 43",
+      "user_email": "user43@example.com",
+      "subscription_type": "enterprise",
+      "churn_risk_score": 0.7160601002409942
+    },
+    {
+      "user_name": "User 44",
+      "user_email": "user44@example.com",
+      "subscription_type": "enterprise",
+      "churn_risk_score": 0.8323129319050805
+    }
+  ],
+  "status": "executed"
+}

@@ -1,0 +1,32 @@
+{
+  "sql_query": "SELECT s.sales_channel AS sales_channel, SUM(s.revenue) AS total_revenue, AVG(s.revenue / s.quantity) AS average_transaction_value FROM sales s GROUP BY s.sales_channel ORDER BY total_revenue DESC; ",
+  "columns": [
+    "sales_channel",
+    "total_revenue",
+    "average_transaction_value"
+  ],
+  "row_count": 4,
+  "data": [
+    {
+      "sales_channel": "online",
+      "total_revenue": 39843.9,
+      "average_transaction_value": 339.697758234127
+    },
+    {
+      "sales_channel": "mobile",
+      "total_revenue": 39532.74,
+      "average_transaction_value": 271.51424576118325
+    },
+    {
+      "sales_channel": "in_store",
+      "total_revenue": 34456.46,
+      "average_transaction_value": 266.17747817460315
+    },
+    {
+      "sales_channel": "marketplace",
+      "total_revenue": 33972.27,
+      "average_transaction_value": 394.8011473214286
+    }
+  ],
+  "status": "executed"
+}

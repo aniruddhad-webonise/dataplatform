@@ -1,0 +1,87 @@
+{
+  "sql_query": "SELECT p.name AS product_name, p.category AS product_category, SUM(s.revenue) AS total_revenue FROM products p JOIN sales s ON p.id = s.product_id GROUP BY p.id, p.name, p.category ORDER BY total_revenue DESC LIMIT 15; ",
+  "columns": [
+    "product_name",
+    "product_category",
+    "total_revenue"
+  ],
+  "row_count": 15,
+  "data": [
+    {
+      "product_name": "Product 7",
+      "product_category": "Toys",
+      "total_revenue": 10073.95
+    },
+    {
+      "product_name": "Product 13",
+      "product_category": "Automotive",
+      "total_revenue": 9756.710000000001
+    },
+    {
+      "product_name": "Product 18",
+      "product_category": "Electronics",
+      "total_revenue": 9359.85
+    },
+    {
+      "product_name": "Product 19",
+      "product_category": "Electronics",
+      "total_revenue": 9326.2
+    },
+    {
+      "product_name": "Product 3",
+      "product_category": "Electronics",
+      "total_revenue": 9146.48
+    },
+    {
+      "product_name": "Product 1",
+      "product_category": "Books",
+      "total_revenue": 7555.66
+    },
+    {
+      "product_name": "Product 4",
+      "product_category": "Electronics",
+      "total_revenue": 6857.53
+    },
+    {
+      "product_name": "Product 16",
+      "product_category": "Home & Kitchen",
+      "total_revenue": 6347.8099999999995
+    },
+    {
+      "product_name": "Product 21",
+      "product_category": "Fashion",
+      "total_revenue": 6202.38
+    },
+    {
+      "product_name": "Product 11",
+      "product_category": "Home & Kitchen",
+      "total_revenue": 6072.58
+    },
+    {
+      "product_name": "Product 8",
+      "product_category": "Toys",
+      "total_revenue": 5638.75
+    },
+    {
+      "product_name": "Product 10",
+      "product_category": "Books",
+      "total_revenue": 5631.93
+    },
+    {
+      "product_name": "Product 22",
+      "product_category": "Automotive",
+      "total_revenue": 5541.09
+    },
+    {
+      "product_name": "Product 5",
+      "product_category": "Books",
+      "total_revenue": 5505.4800000000005
+    },
+    {
+      "product_name": "Product 14",
+      "product_category": "Toys",
+      "total_revenue": 5361.5199999999995
+    }
+  ],
+  "status": "executed"
+}

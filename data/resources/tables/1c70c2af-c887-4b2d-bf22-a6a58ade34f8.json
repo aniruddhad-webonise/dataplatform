@@ -1,0 +1,12 @@
+{
+  "sql_query": "SELECT o.id AS order_id, u.name AS customer_name, o.amount AS order_amount, o.order_date FROM orders o JOIN users u ON o.user_id = u.id WHERE o.order_date >= DATE('now', '-7 days') ORDER BY o.order_date DESC;",
+  "columns": [
+    "order_id",
+    "customer_name",
+    "order_amount",
+    "order_date"
+  ],
+  "row_count": 0,
+  "data": [],
+  "status": "executed"
+}

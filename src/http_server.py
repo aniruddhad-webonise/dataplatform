@@ -22,6 +22,7 @@ from core.resource_manager import ResourceManager
 from core.prompt_manager import PromptManager
 from core.tool_loader import ToolLoader
 from core.sql_explanation_helper import SQLExplanationHelper
+from core.search_service import SearchService
 
 # Load environment variables
 load_dotenv()
@@ -35,6 +36,7 @@ class HTTPMCPServer:
         self.prompt_manager = PromptManager()
         self.tool_loader = ToolLoader()
         self.sql_explanation_helper = SQLExplanationHelper()
+        self.search_service = SearchService(self.resource_manager)
         
         # Load tools from XML files
         self.tools = self.tool_loader.load_all_tools()
@@ -122,6 +124,27 @@ class HTTPMCPServer:
                     "result": json.loads(result)
                 })
             
+            elif tool_name == "search_resources":
+                result = self.search_service.search_resources(
+                    query=arguments.get("query"),
+                    tags=arguments.get("tags"),
+                    any_tags=arguments.get("any_tags"),
+                    category=arguments.get("category"),
+                    resource_type=arguments.get("resource_type"),
+                    created_after=arguments.get("created_after"),
+                    created_before=arguments.get("created_before"),
+                    min_access_count=arguments.get("min_access_count", 0),
+                    limit=arguments.get("limit", 50),
+                    sort_by=arguments.get("sort_by", "created_at"),
+                    sort_order=arguments.get("sort_order", "desc")
+                )
+                
+                return web.json_response({
+                    "status": "success",
+                    "tool": tool_name,
+                    "result": result
+                })
+            
             elif tool_name == "create_viz":
                 return web.json_response({
                     "status": "not_implemented",
@@ -180,6 +203,64 @@ class HTTPMCPServer:
             "status": "success",
             "resources": resources_data
         })
+    
+    async def handle_search_resources(self, request):
+        """Search resources with query parameters."""
+        try:
+            # Get query parameters
+            query = request.query.get("q")
+            tags = request.query.get("tags")
+            any_tags = request.query.get("any_tags")
+            category = request.query.get("category")
+            resource_type = request.query.get("type")
+            limit = int(request.query.get("limit", 50))
+            
+            # Parse tags from comma-separated string
+            if tags:
+                tags = [tag.strip() for tag in tags.split(",")]
+            if any_tags:
+                any_tags = [tag.strip() for tag in any_tags.split(",")]
+            
+            result = self.search_service.search_resources(
+                query=query,
+                tags=tags,
+                any_tags=any_tags,
+                category=category,
+                resource_type=resource_type,
+                limit=limit
+            )
+            
+            return web.json_response(result)
+            
+        except Exception as e:
+            return web.json_response({
+                "status": "error",
+                "error": str(e)
+            }, status=500)
+    
+    async def handle_popular_resources(self, request):
+        """Get most frequently accessed resources."""
+        try:
+            limit = int(request.query.get("limit", 10))
+            result = self.search_service.get_popular_resources(limit)
+            return web.json_response(result)
+        except Exception as e:
+            return web.json_response({
+                "status": "error",
+                "error": str(e)
+            }, status=500)
+    
+    async def handle_recent_resources(self, request):
+        """Get recently created resources."""
+        try:
+            limit = int(request.query.get("limit", 10))
+            result = self.search_service.get_recent_resources(limit)
+            return web.json_response(result)
+        except Exception as e:
+            return web.json_response({
+                "status": "error",
+                "error": str(e)
+            }, status=500)
     
     async def handle_read_resource(self, request):
         """Read a specific resource."""
@@ -282,7 +363,10 @@ class HTTPMCPServer:
         
         # Resource endpoints
         app.router.add_get('/resources', self.handle_list_resources)
-        app.router.add_get('/resources/{uri:.*}', self.handle_read_resource)
+        app.router.add_get('/resources/{uri}', self.handle_read_resource)
+        app.router.add_get('/search', self.handle_search_resources)
+        app.router.add_get('/resources/popular', self.handle_popular_resources)
+        app.router.add_get('/resources/recent', self.handle_recent_resources)
         
         # Prompt endpoints
         app.router.add_get('/prompts', self.handle_list_prompts)
@@ -304,6 +388,9 @@ class HTTPMCPServer:
         print(f"  GET  /tools - List all tools")
         print(f"  GET  /resources - List all resources")
         print(f"  GET  /resources/{{uri}} - Read a resource")
+        print(f"  GET  /search - Search resources")
+        print(f"  GET  /resources/popular - Get popular resources")
+        print(f"  GET  /resources/recent - Get recent resources")
         print(f"  GET  /prompts - List all prompts")
         print(f"  GET  /prompts/{{name}} - Get a prompt")
         print(f"  GET  /sse - Server-Sent Events")

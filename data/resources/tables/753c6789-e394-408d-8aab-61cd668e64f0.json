@@ -1,0 +1,19 @@
+{
+  "sql_query": "SELECT p.id AS product_id, p.name AS product_name, p.stock_quantity, p.price FROM products p WHERE p.stock_quantity < 10;",
+  "columns": [
+    "product_id",
+    "product_name",
+    "stock_quantity",
+    "price"
+  ],
+  "row_count": 1,
+  "data": [
+    {
+      "product_id": 11,
+      "product_name": "Product 11",
+      "stock_quantity": 4,
+      "price": 1355.5
+    }
+  ],
+  "status": "executed"
+}

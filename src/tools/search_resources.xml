@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tool name="search_resources">
+    <description>Search and filter resources using enhanced metadata including tags, content, categories, and other criteria</description>
+    <parameters>
+        <parameter name="query" type="string" required="false">
+            <description>Free text search query to search across names, descriptions, and content</description>
+        </parameter>
+        <parameter name="tags" type="array" required="false">
+            <description>Array of tags to filter by (resources must have ALL specified tags)</description>
+        </parameter>
+        <parameter name="any_tags" type="array" required="false">
+            <description>Array of tags to filter by (resources must have ANY of the specified tags)</description>
+        </parameter>
+        <parameter name="category" type="string" required="false">
+            <description>Filter by resource category (infrastructure, data, visualization, analytics, general)</description>
+        </parameter>
+        <parameter name="resource_type" type="string" required="false">
+            <description>Filter by resource type (table, schema, chart, ml)</description>
+        </parameter>
+        <parameter name="created_after" type="string" required="false">
+            <description>Filter resources created after this date (ISO format: YYYY-MM-DD)</description>
+        </parameter>
+        <parameter name="created_before" type="string" required="false">
+            <description>Filter resources created before this date (ISO format: YYYY-MM-DD)</description>
+        </parameter>
+        <parameter name="min_access_count" type="integer" required="false" default="0">
+            <description>Minimum access count for resources</description>
+        </parameter>
+        <parameter name="limit" type="integer" required="false" default="50">
+            <description>Maximum number of results to return</description>
+        </parameter>
+        <parameter name="sort_by" type="string" required="false" default="created_at">
+            <description>Sort results by field (created_at, name, access_count, last_accessed)</description>
+        </parameter>
+        <parameter name="sort_order" type="string" required="false" default="desc">
+            <description>Sort order (asc, desc)</description>
+        </parameter>
+    </parameters>
+    <returns>
+        <parameter name="results" type="array">
+            <description>Array of matching resources with their metadata</description>
+        </parameter>
+        <parameter name="total_count" type="integer">
+            <description>Total number of matching resources</description>
+        </parameter>
+        <parameter name="search_criteria" type="object">
+            <description>Summary of search criteria used</description>
+        </parameter>
+        <parameter name="status" type="string">
+            <description>Status of the search (completed, failed)</description>
+        </parameter>
+    </returns>
+    <examples>
+        <example>
+            <input>
+                <query>revenue analysis</query>
+                <tags>["financial", "metrics"]</tags>
+                <category>analytics</category>
+                <limit>10</limit>
+            </input>
+            <output>
+                <results>[{"uri": "resource://tables/abc123", "name": "Revenue Analysis", "description": "...", "tags": ["financial", "metrics", "revenue"], "category": "analytics", "access_count": 5}]</results>
+                <total_count>3</total_count>
+                <search_criteria>{"query": "revenue analysis", "tags": ["financial", "metrics"], "category": "analytics"}</search_criteria>
+                <status>completed</status>
+            </output>
+        </example>
+        <example>
+            <input>
+                <any_tags>["users", "orders"]</any_tags>
+                <resource_type>table</resource_type>
+                <min_access_count>1</min_access_count>
+                <sort_by>access_count</sort_by>
+                <sort_order>desc</sort_order>
+            </input>
+            <output>
+                <results>[{"uri": "resource://tables/def456", "name": "User Orders Analysis", "description": "...", "tags": ["users", "orders"], "category": "data", "access_count": 15}]</results>
+                <total_count>5</total_count>
+                <search_criteria>{"any_tags": ["users", "orders"], "resource_type": "table", "min_access_count": 1}</search_criteria>
+                <status>completed</status>
+            </output>
+        </example>
+    </examples>
+</tool> 

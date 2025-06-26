@@ -1,0 +1,11 @@
+{
+  "sql_query": "WITH MonthlySales AS ( SELECT strftime('%Y-%m', o.order_date) AS month, SUM(o.amount) AS total_sales, COUNT(o.id) AS total_orders FROM orders o WHERE o.order_date >= date('now', '-6 months') GROUP BY strftime('%Y-%m', o.order_date) ) SELECT month, total_sales, total_sales / total_orders AS average_order_value FROM MonthlySales ORDER BY month DESC;",
+  "columns": [
+    "month",
+    "total_sales",
+    "average_order_value"
+  ],
+  "row_count": 0,
+  "data": [],
+  "status": "executed"
+}

@@ -1,0 +1,32 @@
+{
+  "sql_query": "SELECT o.payment_method, COUNT(o.id) AS transaction_count, AVG(o.amount) AS average_order_value FROM orders o GROUP BY o.payment_method;",
+  "columns": [
+    "payment_method",
+    "transaction_count",
+    "average_order_value"
+  ],
+  "row_count": 4,
+  "data": [
+    {
+      "payment_method": "bank_transfer",
+      "transaction_count": 30,
+      "average_order_value": 274.39733333333334
+    },
+    {
+      "payment_method": "credit_card",
+      "transaction_count": 29,
+      "average_order_value": 240.2855172413793
+    },
+    {
+      "payment_method": "crypto",
+      "transaction_count": 14,
+      "average_order_value": 246.70714285714286
+    },
+    {
+      "payment_method": "paypal",
+      "transaction_count": 27,
+      "average_order_value": 265.1596296296296
+    }
+  ],
+  "status": "executed"
+}

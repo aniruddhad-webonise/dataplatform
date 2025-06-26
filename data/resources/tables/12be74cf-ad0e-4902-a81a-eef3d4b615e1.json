@@ -1,0 +1,62 @@
+{
+  "sql_query": "SELECT u.name, u.email, SUM(o.amount) AS total_spending FROM users u JOIN orders o ON u.id = o.user_id GROUP BY u.id ORDER BY total_spending DESC LIMIT 10;",
+  "columns": [
+    "name",
+    "email",
+    "total_spending"
+  ],
+  "row_count": 10,
+  "data": [
+    {
+      "name": "User 20",
+      "email": "user20@example.com",
+      "total_spending": 2869.79
+    },
+    {
+      "name": "User 16",
+      "email": "user16@example.com",
+      "total_spending": 1860.4
+    },
+    {
+      "name": "User 43",
+      "email": "user43@example.com",
+      "total_spending": 1429.6399999999999
+    },
+    {
+      "name": "User 4",
+      "email": "user4@example.com",
+      "total_spending": 1407.99
+    },
+    {
+      "name": "User 49",
+      "email": "user49@example.com",
+      "total_spending": 1232.52
+    },
+    {
+      "name": "User 21",
+      "email": "user21@example.com",
+      "total_spending": 950.0899999999999
+    },
+    {
+      "name": "User 9",
+      "email": "user9@example.com",
+      "total_spending": 931.51
+    },
+    {
+      "name": "User 40",
+      "email": "user40@example.com",
+      "total_spending": 891.88
+    },
+    {
+      "name": "User 48",
+      "email": "user48@example.com",
+      "total_spending": 889.5799999999999
+    },
+    {
+      "name": "User 6",
+      "email": "user6@example.com",
+      "total_spending": 869.29
+    }
+  ],
+  "status": "executed"
+}

@@ -1,0 +1,11 @@
+{
+  "sql_query": "SELECT u.name, u.signup_date, u.country FROM users u WHERE u.signup_date >= DATE('now', '-30 days');",
+  "columns": [
+    "name",
+    "signup_date",
+    "country"
+  ],
+  "row_count": 0,
+  "data": [],
+  "status": "executed"
+}
